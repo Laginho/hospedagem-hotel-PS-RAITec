@@ -1,4 +1,4 @@
-from helper_quartos import print_quartos_disponiveis, fazer_checkin
+from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
 
 def menu_cliente_cli():
 
@@ -11,6 +11,7 @@ def menu_cliente_cli():
         print("1 - Ver quartos disponíveis")
         print("2 - Fazer uma reserva (Check-in)")
         print("3 - Consultar minha reserva")
+        print("4 - Cancelar minha reserva")
         print("0 - Sair")
 
         opcao = input("Escolha uma opção: ").strip()
@@ -23,10 +24,14 @@ def menu_cliente_cli():
             dias = input("Digite a quantidade de dias para a reserva: ").strip()
             print(fazer_checkin(nome, dias))
         elif opcao == "3":
-            print("CONSULTAR RESERVA")
+            nome = input("Digite seu nome para consultar a reserva: ").strip()
+            print(consultar_reserva(nome))
+        elif opcao == "4":
+            nome = input("Digite seu nome para cancelar a reserva: ").strip()
+            print(cancelar_reserva(nome))
         elif opcao == "0":
             print("\nFinalizando Programa...")
-            break
+            exit()
         else:
             print("ERRO: Digite uma opção válida!")
 
@@ -63,7 +68,7 @@ def menu_funcionario_cli():
                 print("Visualizar Base de Dados")
             elif opcao == "0":
                 print("Finalizando Programa...")
-                break
+                exit()
             else:
                 print("ERRO: Digite uma opção válida!")
 

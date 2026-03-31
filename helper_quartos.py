@@ -39,3 +39,34 @@ def fazer_checkin(nome: str, dias: str) -> str:
     
     else:
         return "Não há quartos disponíveis para check-in."
+    
+def consultar_reserva(nome: str) -> str:
+    """Consulta a reserva de um cliente pelo nome."""
+    
+    data = parse_csv("quartos.csv")
+    
+    for quarto in data:
+        if quarto["CLIENTE"].strip().lower() == nome.strip().lower():
+            return (f"Reserva encontrada: Quarto {quarto['QUARTO']} - "
+                    f"Check-in: {quarto['CHECKIN']} - "
+                    f"Check-out: {quarto['CHECKOUT']}")
+    
+    return "Nenhuma reserva encontrada para o nome fornecido."
+
+def cancelar_reserva(nome: str) -> str:
+    """Cancela a reserva de um cliente pelo nome."""
+    
+    data = parse_csv("quartos.csv")
+    
+    for quarto in data:
+        if quarto["CLIENTE"].strip().lower() == nome.strip().lower():
+            quarto["DISPONIBILIDADE"] = "DISPONÍVEL"
+            quarto["CLIENTE"] = ""
+            quarto["CHECKIN"] = ""
+            quarto["CHECKOUT"] = ""
+            
+            save_csv("quartos.csv", data)
+            
+            return f"Reserva cancelada com sucesso para o cliente {nome}."
+    
+    return "Nenhuma reserva encontrada para o nome fornecido."

@@ -24,14 +24,14 @@ def parse_csv(filename: str) -> list:
         reader = csv.DictReader(file)
         return [row for row in reader]
     
-def print_csv(csv: str) -> None:
+def print_csv(filename: str) -> None:
     """Imprime os dados de um arquivo CSV formatados como uma tabela.
     
     Args:
-        csv (str): O caminho do arquivo CSV a ser impresso.
+        filename (str): O caminho do arquivo CSV a ser impresso.
     """
     
-    data = parse_csv(csv)
+    data = parse_csv(filename)
     
     columns = data[0].keys()
     
