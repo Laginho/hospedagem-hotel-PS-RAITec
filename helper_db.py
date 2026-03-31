@@ -20,8 +20,8 @@ def parse_csv(filename: str) -> list:
               na primeira linha do arquivo.
     """
     
-    with open(filename, mode='r', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
+    with open(filename, mode='r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
         return [row for row in reader]
     
 def print_csv(csv: str) -> None:
@@ -40,17 +40,18 @@ def print_csv(csv: str) -> None:
     for row in data:
         print("\t".join(str(row[col]) for col in columns))
     
-def save_csv(data: list) -> None:
-    """Salva dados em um arquivo CSV chamados "quartos.csv".
+def save_csv(filename: str, data: list) -> None:
+    """Salva dados em um arquivo CSV.
     
     Args:
+        filename (str): O caminho do arquivo CSV a ser salvo.
         data (list): Uma lista de dicionários, onde cada dicionário representa uma linha
                      a ser salva no arquivo CSV, com as chaves sendo os nomes das colunas.
     """
     
-    with open("quartos.csv", mode='w', encoding='utf-8', newline='') as csvfile:
+    with open(filename, mode='w', encoding='utf-8', newline='') as file:
         if len(data) == 0:
             return
-        writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+        writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
