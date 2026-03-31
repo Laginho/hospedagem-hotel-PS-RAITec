@@ -24,14 +24,14 @@ def parse_csv(filename: str) -> list:
         reader = csv.DictReader(csvfile)
         return [row for row in reader]
     
-def print_csv(csv: str) -> None:
+def print_csv(filename: str) -> None:
     """Imprime os dados de um arquivo CSV formatados como uma tabela.
     
     Args:
-        csv (str): O caminho do arquivo CSV a ser impresso.
+        filename (str): O caminho do arquivo CSV a ser impresso.
     """
     
-    data = parse_csv(csv)
+    data = parse_csv(filename)
     
     columns = data[0].keys()
     
@@ -40,10 +40,11 @@ def print_csv(csv: str) -> None:
     for row in data:
         print("\t".join(str(row[col]) for col in columns))
     
-def save_csv(data: list) -> None:
-    """Salva dados em um arquivo CSV chamados "quartos.csv".
+def save_csv(filename: str, data: list) -> None:
+    """Salva dados em um arquivo CSV.
     
     Args:
+        filename (str): O caminho do arquivo CSV a ser salvo.
         data (list): Uma lista de dicionários, onde cada dicionário representa uma linha
                      a ser salva no arquivo CSV, com as chaves sendo os nomes das colunas.
     """

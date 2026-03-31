@@ -2,7 +2,8 @@
 
 """
 
-from helper_db import parse_csv
+from helper_db import parse_csv, save_csv
+from datetime import date, timedelta
 
 def print_quartos_disponiveis():
     """Imprime os quartos disponíveis formatados como uma tabela."""
@@ -49,5 +50,23 @@ def consultar_reserva(nome: str) -> str:
             return (f"Reserva encontrada: Quarto {quarto['QUARTO']} - "
                     f"Check-in: {quarto['CHECKIN']} - "
                     f"Check-out: {quarto['CHECKOUT']}")
+    
+    return "Nenhuma reserva encontrada para o nome fornecido."
+
+def cancelar_reserva(nome: str) -> str:
+    """Cancela a reserva de um cliente pelo nome."""
+    
+    data = parse_csv("quartos.csv")
+    
+    for quarto in data:
+        if quarto["CLIENTE"].strip().lower() == nome.strip().lower():
+            quarto["DISPONIBILIDADE"] = "DISPONÍVEL"
+            quarto["CLIENTE"] = ""
+            quarto["CHECKIN"] = ""
+            quarto["CHECKOUT"] = ""
+            
+            save_csv("quartos.csv", data)
+            
+            return f"Reserva cancelada com sucesso para o cliente {nome}."
     
     return "Nenhuma reserva encontrada para o nome fornecido."
