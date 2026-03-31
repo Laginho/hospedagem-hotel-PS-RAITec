@@ -1,4 +1,4 @@
-from helper_quartos import print_quartos_disponiveis
+from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva
 
 def menu_cliente_cli():
 
@@ -21,7 +21,8 @@ def menu_cliente_cli():
         elif opcao == "2":
             print("FUNÇÃO DE CHECKIN")
         elif opcao == "3":
-            print("CONSULTAR RESERVA")
+            nome = input("Digite seu nome para consultar a reserva: ").strip()
+            print(consultar_reserva(nome))
         elif opcao == "0":
             print("\nFinalizando Programa...")
             break
