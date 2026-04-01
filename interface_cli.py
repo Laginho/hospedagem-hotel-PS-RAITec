@@ -12,10 +12,11 @@ def menu_cliente_cli():
         print("Área do Cliente")
         print("="*35)
 
+
         print(" > [1] - Ver quartos disponíveis")
         print(" > [2] - Fazer uma reserva (Check-in)")
-        print(" > [3] - Consultar minha reserva")
-        print(" > 4] - Cancelar minha reserva")
+        print(" > [3] - Consultar minhas reserva")
+        print(" > [4] - Cancelar minha reserva")
         print(" > [0] - Sair")
 
         opcao = input("\n >> Escolha uma opção: ").strip()
@@ -26,16 +27,18 @@ def menu_cliente_cli():
             pausar_tela()
         elif opcao == "2":
             nome = ler_texto_obrigatorio("Digite seu nome para a reserva: ")
+            quarto = input("Digite o número do quarto desejado: ").strip()
             dias = input("Digite a quantidade de dias para a reserva: ").strip()
-            print(fazer_checkin(nome, dias))
+            print(fazer_checkin(nome, quarto, dias))
             pausar_tela()
         elif opcao == "3":
-            nome = input("Digite seu nome para consultar a reserva: ").strip()
+            nome = input("Digite seu nome para consultar as reservas: ").strip()
             print(consultar_reserva(nome))
             pausar_tela()
         elif opcao == "4":
             nome = input("Digite seu nome para cancelar a reserva: ").strip()
-            print(cancelar_reserva(nome))
+            quarto = input("Digite o número do quarto que deseja cancelar: ").strip()
+            print(cancelar_reserva(nome, quarto))
             pausar_tela()
         elif opcao == "0":
             print("\nFinalizando Programa...")
