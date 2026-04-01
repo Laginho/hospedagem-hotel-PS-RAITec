@@ -1,5 +1,7 @@
 import os
 
+
+
 # Códigos ANSI para cores no terminal
 VERMELHO = '\033[91m'
 VERDE = '\033[92m'
@@ -15,3 +17,5 @@ def limpar_tela():
 
 def pausar_tela():
     input("\nPressione Enter para continuar...")
+
+

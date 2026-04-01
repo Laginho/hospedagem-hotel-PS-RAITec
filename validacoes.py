@@ -1,5 +1,6 @@
 from datetime import datetime
 from utils.utils import VERMELHO, VERDE, AZUL, AMARELO, NEGRITO, RESET
+from helper_db import parse_csv
 
 
 def ler_texto_obrigatorio(mensagem):
@@ -45,3 +46,14 @@ def ler_data(mensagem):
             return data_valida.strftime("%d/%m/%Y")
         except ValueError:
             print(f"{AMARELO}ERRO: Data inválida ou formato incorreto. Use DD/MM/AAAA{RESET}")
+
+
+def tem_quarto_disponivel():
+    """Verifica no CSV se existe pelo menos um quarto livre."""
+    data = parse_csv("quartos.csv")
+
+    for quarto in data:
+        if quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL":
+            return True
+
+    return False
