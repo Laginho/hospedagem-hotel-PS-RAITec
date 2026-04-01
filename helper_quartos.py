@@ -30,32 +30,35 @@ def print_quartos_disponiveis():
         print(f"| {'Nenhum quarto livre no momento':^27} |")
 
     print("-" * 31)
-    
+
+
 def fazer_checkin(nome: str, quarto_numero: str, dias: str) -> str:
     """Tenta realizar o check-in de um cliente em um quarto específico."""
-    
+
     data = parse_csv("quartos.csv")
-    quarto_disponível = None
-    
+    quarto_disponivel = None
+
     for quarto in data:
         if quarto["QUARTO"] == quarto_numero:
-            quarto_disponível = quarto
+            # SÓ SALVA A VARIÁVEL SE ESTIVER DISPONÍVEL!
             if quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL":
                 quarto_disponivel = quarto
+
+            # O break fica FORA do if de disponibilidade, mas DENTRO do if de número.
             break
 
-    if quarto_disponível:
-        quarto_disponível["DISPONIBILIDADE"] = "RESERVADO"
-        quarto_disponível["CLIENTE"] = nome
-        quarto_disponível["CHECKIN"] = date.today().isoformat()
-        
-        checkout = date.today().fromisoformat(quarto_disponível["CHECKIN"]) + timedelta(days=int(dias))
-        quarto_disponível["CHECKOUT"] = checkout.isoformat()
-        
+    if quarto_disponivel:
+        quarto_disponivel["DISPONIBILIDADE"] = "RESERVADO"
+        quarto_disponivel["CLIENTE"] = nome
+        quarto_disponivel["CHECKIN"] = date.today().isoformat()
+
+        checkout = date.today().fromisoformat(quarto_disponivel["CHECKIN"]) + timedelta(days=int(dias))
+        quarto_disponivel["CHECKOUT"] = checkout.isoformat()
+
         save_csv("quartos.csv", data)
-        
+
         return f"Check-in realizado com sucesso no quarto {quarto_disponivel['QUARTO']}."
-    
+
     else:
         return f"O quarto {quarto_numero} não existe ou já está ocupado."
     
