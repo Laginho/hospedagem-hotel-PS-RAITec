@@ -1,6 +1,6 @@
 from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
 from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel
-from utils.utils import limpar_tela, pausar_tela, AMARELO, RESET, VERMELHO
+from utils.utils import limpar_tela, pausar_tela, RESET, VERMELHO
 
 
 def menu_cliente_cli():
