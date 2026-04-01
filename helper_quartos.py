@@ -14,14 +14,14 @@ def print_quartos_disponiveis():
         if quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL":
             print(f"Quarto {quarto['QUARTO']} - Disponível")
     
-def fazer_checkin(nome: str, dias: str) -> str:
-    """Realiza o check-in de um cliente em um quarto disponível."""
+def fazer_checkin(nome: str, quarto_numero: str, dias: str) -> str:
+    """Tenta realizar o check-in de um cliente em um quarto específico."""
     
     data = parse_csv("quartos.csv")
     quarto_disponível = None
     
     for quarto in data:
-        if quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL":
+        if quarto["QUARTO"] == quarto_numero:
             quarto_disponível = quarto
             break
 
@@ -38,7 +38,7 @@ def fazer_checkin(nome: str, dias: str) -> str:
         return f"Check-in realizado com sucesso no quarto {quarto_disponível['QUARTO']}."
     
     else:
-        return "Não há quartos disponíveis para check-in."
+        return f"O quarto {quarto_numero} não está disponível para check-in."
     
 def consultar_reserva(nome: str) -> str:
     """Consulta a reserva de um cliente pelo nome."""
