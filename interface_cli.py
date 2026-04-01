@@ -1,39 +1,48 @@
 from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
+from validacoes import ler_texto_obrigatorio
+from utils.utils import limpar_tela, pausar_tela
+
 
 def menu_cliente_cli():
 
     while True:
+        limpar_tela()
 
         print("\n" + "="*35)
         print("Área do Cliente")
         print("="*35)
 
-        print("1 - Ver quartos disponíveis")
-        print("2 - Fazer uma reserva (Check-in)")
-        print("3 - Consultar minha reserva")
-        print("4 - Cancelar minha reserva")
-        print("0 - Sair")
+        print(" > [1] - Ver quartos disponíveis")
+        print(" > [2] - Fazer uma reserva (Check-in)")
+        print(" > [3] - Consultar minha reserva")
+        print(" > 4] - Cancelar minha reserva")
+        print(" > [0] - Sair")
 
-        opcao = input("Escolha uma opção: ").strip()
+        opcao = input("\n >> Escolha uma opção: ").strip()
         print("\n\n")
 
         if opcao == "1":
             print_quartos_disponiveis()
+            pausar_tela()
         elif opcao == "2":
-            nome = input("Digite seu nome para a reserva: ").strip()
+            nome = ler_texto_obrigatorio("Digite seu nome para a reserva: ")
             dias = input("Digite a quantidade de dias para a reserva: ").strip()
             print(fazer_checkin(nome, dias))
+            pausar_tela()
         elif opcao == "3":
             nome = input("Digite seu nome para consultar a reserva: ").strip()
             print(consultar_reserva(nome))
+            pausar_tela()
         elif opcao == "4":
             nome = input("Digite seu nome para cancelar a reserva: ").strip()
             print(cancelar_reserva(nome))
+            pausar_tela()
         elif opcao == "0":
             print("\nFinalizando Programa...")
             exit()
         else:
             print("ERRO: Digite uma opção válida!")
+            pausar_tela()
 
 
 def menu_funcionario_cli():
@@ -42,21 +51,23 @@ def menu_funcionario_cli():
 
     if senha == "raiteis2026":
         print("\nAcesso Liberado!")
+        pausar_tela()
 
         while True:
+            limpar_tela()
 
             print("\n" + "="*35)
             print("Área do Funcionário")
             print("="*35)
 
-            print("1 - Cadastrar Cliente")
-            print("2 - Gerenciar Quartos")
-            print("3 - Registrar Checkout")
-            print("4 - Visualizar Base de Dados")
-            print("0 - Sair")
+            print(" > [1] - Cadastrar Cliente")
+            print(" > [2] - Gerenciar Quartos")
+            print(" > [3] - Registrar Checkout")
+            print(" > [4] - Visualizar Base de Dados")
+            print(" > [0] - Sair")
             print("-"*35)
 
-            opcao = input("Escolha uma opção: ").strip()
+            opcao = input("\n >> Escolha uma opção: ").strip()
 
             if opcao == "1":
                 print("Cadastrar Cliente")
@@ -71,6 +82,7 @@ def menu_funcionario_cli():
                 exit()
             else:
                 print("ERRO: Digite uma opção válida!")
+                pausar_tela()
 
     else: 
         print("Senha Incorreta! Acesso Negado!")
@@ -78,17 +90,18 @@ def menu_funcionario_cli():
 def menu_principal():
 
     while True:
+        limpar_tela()
 
         print("\n" + "="*35)
         print("SISTEMA DE HOSPEDAGEM RAITEIS")
         print("="*35)
 
-        print("1 - Acesso Cliente")
-        print("2 - Acesso Funcionário")
-        print("0 - Sair")
+        print(" > [1] - Acesso Cliente")
+        print(" > [2] - Acesso Funcionário")
+        print(" > [0] - Sair")
         print("-"*35)
 
-        opcao = input("Escolha o seu perfil de acesso: ").strip()
+        opcao = input("\n >> Escolha o seu perfil de acesso: ").strip()
 
         if opcao == "1":
             menu_cliente_cli()
@@ -99,3 +112,4 @@ def menu_principal():
             break
         else:
             print("ERRO: Digite uma opção válida!")
+            pausar_tela()
