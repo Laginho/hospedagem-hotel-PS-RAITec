@@ -32,7 +32,7 @@ def print_quartos_disponiveis():
     print("-" * 31)
 
 
-def fazer_checkin(nome: str, quarto_numero: str, dias: str) -> str:
+def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) -> str:
     """Tenta realizar o check-in de um cliente em um quarto específico."""
 
     data = parse_csv("quartos.csv")
@@ -50,7 +50,7 @@ def fazer_checkin(nome: str, quarto_numero: str, dias: str) -> str:
     if quarto_disponivel:
         quarto_disponivel["DISPONIBILIDADE"] = "RESERVADO"
         quarto_disponivel["CLIENTE"] = nome
-        quarto_disponivel["CHECKIN"] = date.today().isoformat()
+        quarto_disponivel["CHECKIN"] = data_entrada.isoformat()
 
         checkout = date.today().fromisoformat(quarto_disponivel["CHECKIN"]) + timedelta(days=int(dias))
         quarto_disponivel["CHECKOUT"] = checkout.isoformat()

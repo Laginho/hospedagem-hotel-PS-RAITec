@@ -1,5 +1,5 @@
 from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
-from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre
+from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre, ler_data_futura
 from helper_db import parse_csv, save_csv
 from utils.utils import limpar_tela, pausar_tela, AMARELO, RESET, VERMELHO, VERDE, AZUL
 from classes_raiteis import Funcionario, Cliente
@@ -23,7 +23,7 @@ clientes_cadastrados = [] # Lista que vai guardar os clientes que forem cadastra
 
 
 
-def menu_cliente_cli():                                # MENU DO CLIENTE: Tudo que o cliente pode acessar.
+def menu_cliente_cli(usuario_atual):                                # MENU DO CLIENTE: Tudo que o cliente pode acessar.
 
     while True:
         limpar_tela()                                  # A função limpar_tela é puramente estética, rode o programa no console "Alt + F12" -> Python main.py
@@ -59,7 +59,7 @@ def menu_cliente_cli():                                # MENU DO CLIENTE: Tudo q
                 pausar_tela()
                 continue
 
-            nome = ler_texto_obrigatorio("Digite seu nome para a reserva: ")        # Esse input não vai ser útil quando o login do cliente for implementado
+            nome = usuario_atual.getNome()        # Esse input não vai ser útil quando o login do cliente for implementado
             print_quartos_disponiveis()
             quarto = ler_texto_obrigatorio("Digite o número do quarto desejado: ").strip()
 
@@ -69,19 +69,20 @@ def menu_cliente_cli():                                # MENU DO CLIENTE: Tudo q
                 pausar_tela()
                 continue
 
+            data_checkin = ler_data_futura("Digite a data do Check-in (DD/MM/AAAA): ")
             dias = input("Digite a quantidade de dias para a reserva: ").strip()
-            print(fazer_checkin(nome, quarto, dias))
+            print(fazer_checkin(nome, quarto, dias, data_checkin))
             pausar_tela()
 
         elif opcao == "3":
             limpar_tela()
-            nome = input("Digite seu nome para consultar as reservas: ").strip()
+            nome = usuario_atual.getNome()
             print(consultar_reserva(nome))
             pausar_tela()
 
         elif opcao == "4":
             limpar_tela()
-            nome = input("Digite seu nome para cancelar a reserva: ").strip()
+            nome = usuario_atual.getNome()
             print(consultar_reserva(nome))
             quarto = input("Digite o número do quarto que deseja cancelar: ").strip()
             print(cancelar_reserva(nome, quarto))
@@ -166,7 +167,7 @@ def menu_portal_cliente():
             if cliente_logado and cliente_logado.validar_login(senha_digitada):
                 print(f"\n{VERDE}Login efetuado! Bem-vindo(a) de volta, {cliente_logado.getNome()}.{RESET}")
                 pausar_tela()
-                menu_cliente_cli()
+                menu_cliente_cli(cliente_logado)
             else:
                 print(f"\n{VERMELHO}ERRO: não foi possível autenticar. Por favor, confira se os dados estão corretos e tente novamente.{RESET}")
                 pausar_tela()
