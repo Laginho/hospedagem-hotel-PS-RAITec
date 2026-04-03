@@ -57,3 +57,17 @@ def tem_quarto_disponivel():
             return True
 
     return False
+
+
+def quarto_esta_livre(numero_quarto: str) -> bool:
+    """Verifica se um quarto específico existe e está com status 'DISPONÍVEL'."""
+    data = parse_csv("quartos.csv")
+
+    for quarto in data:
+        # Achou o quarto que o usuário digitou
+        if quarto["QUARTO"] == numero_quarto:
+            # Retorna True se estiver livre, False se estiver qualquer outra coisa
+            return quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL"
+
+    # Se o loop terminar e não achar o número do quarto no CSV, ele não existe
+    return False
