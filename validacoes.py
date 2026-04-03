@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from utils.utils import VERMELHO, VERDE, AZUL, AMARELO, NEGRITO, RESET
 from helper_db import parse_csv
 
@@ -30,22 +30,21 @@ def ler_numero_inteiro(mensagem):
             print(f"{AMARELO}ERRO: Digite apenas números inteiros. Letras não são aceitas.{RESET}")
 
 
-def ler_data(mensagem):
-    #Garante que o usuário digite uma data real no formato DD/MM/AAAA.
+def ler_data_futura(mensagem: str) -> date:
+    """Pede uma data ao usuário e garante que ela seja igual ou maior que hoje."""
     while True:
         data_str = input(mensagem).strip()
-        if data_str == "":
-            print(f"{AMARELO}ERRO: A data é obrigatória.{RESET}")
-            continue
-
         try:
-            #O strptime tenta encaixar a string no formato de data
-            data_valida = datetime.strptime(data_str, "%d/%m/%Y")
+            # Tenta converter a string "DD/MM/AAAA" em um objeto de data do Python
+            data_obj = datetime.strptime(data_str, "%d/%m/%Y").date()
 
-            #Se passar retorna a data bonitinha como string
-            return data_valida.strftime("%d/%m/%Y")
+            if data_obj < date.today():
+                print(f"{VERMELHO}ERRO: A data de check-in não pode estar no passado!{RESET}")
+            else:
+                return data_obj  # Retorna a data perfeitinha
+
         except ValueError:
-            print(f"{AMARELO}ERRO: Data inválida ou formato incorreto. Use DD/MM/AAAA{RESET}")
+            print(f"{VERMELHO}ERRO: Formato inválido. Use o formato DD/MM/AAAA.{RESET}")
 
 
 def tem_quarto_disponivel():
