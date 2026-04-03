@@ -1,2 +1,2 @@
-TIPO,USUARIO,SENHA
-Cliente,5,55
+TIPO,USUARIO,SENHA,NOME
+Cliente,5,55,João Silva

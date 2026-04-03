@@ -70,3 +70,19 @@ def quarto_esta_livre(numero_quarto: str) -> bool:
 
     # Se o loop terminar e não achar o número do quarto no CSV, ele não existe
     return False
+
+def validar_login(cpf: str, senha: str) -> bool:
+    """Verifica se existe um cliente com o CPF e senha fornecidos."""
+    contas = parse_csv("credenciais.csv")
+    for conta in contas:
+        if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
+            return True
+    return False
+
+def get_nome_cliente(cpf: str) -> str:
+    """Dado um CPF, retorna o nome do cliente associado a ele, ou None se não encontrado."""
+    contas = parse_csv("credenciais.csv")
+    for conta in contas:
+        if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf:
+            return conta.get("NOME", None)
+    return None

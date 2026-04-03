@@ -1,5 +1,5 @@
 from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
-from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre, ler_data_futura
+from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre, ler_data_futura, validar_login, get_nome_cliente
 from helper_db import parse_csv, save_csv
 from utils.utils import limpar_tela, pausar_tela, AMARELO, RESET, VERMELHO, VERDE, AZUL
 from classes_raiteis import Funcionario, Cliente
@@ -158,15 +158,11 @@ def menu_portal_cliente():
             senha_digitada = ler_texto_obrigatorio("  >> Digite sua senha: ")
 
             # Procura o cliente na lista
-            cliente_logado = None
-            for cli in clientes_cadastrados:
-                if cli.getCPF() == cpf_digitado:
-                    cliente_logado = cli
-                    break
-
-            if cliente_logado and cliente_logado.validar_login(senha_digitada):
-                print(f"\n{VERDE}Login efetuado! Bem-vindo(a) de volta, {cliente_logado.getNome()}.{RESET}")
+            if validar_login(cpf_digitado, senha_digitada):
+                nome = get_nome_cliente(cpf_digitado)
+                print(f"\n{VERDE}Login efetuado! Bem-vindo(a) de volta, {nome}.{RESET}")
                 pausar_tela()
+                cliente_logado = Cliente(nome=nome, cpf=cpf_digitado)
                 menu_cliente_cli(cliente_logado)
             else:
                 print(f"\n{VERMELHO}ERRO: não foi possível autenticar. Por favor, confira se os dados estão corretos e tente novamente.{RESET}")
@@ -180,7 +176,7 @@ def menu_portal_cliente():
 
             novo_cliente = Cliente(nome=nome, cpf=cpf)
             clientes_cadastrados.append(novo_cliente)
-            save_csv("credenciais.csv", [{"TIPO": "Cliente", "USUARIO": cpf, "SENHA": senha}])
+            save_csv("credenciais.csv", [{"TIPO": "Cliente", "USUARIO": cpf, "SENHA": senha, "NOME": nome}])
 
             print(f"\n{VERDE}Conta criada com sucesso! Objeto Cliente gerado na memória e credenciais salvas no banco de dados.{RESET}")
             pausar_tela()
