@@ -1,5 +1,5 @@
 from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
-from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre, ler_data_futura, validar_login, get_nome_cliente
+from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre, ler_data_futura, validar_login, get_nome_cliente, ler_cpf, cpf_ja_cadastrado
 from helper_db import parse_csv, save_csv
 from utils.utils import limpar_tela, pausar_tela, AMARELO, RESET, VERMELHO, VERDE, AZUL
 from classes_raiteis import Funcionario, Cliente
@@ -154,7 +154,7 @@ def menu_portal_cliente():
 
         if opcao == '1':
             print("\n--- LOGIN DE CLIENTE ---")
-            cpf_digitado = ler_texto_obrigatorio("  >> Digite seu CPF (apenas números): ")
+            cpf_digitado = ler_cpf("  >> Digite seu CPF (apenas números): ")
             senha_digitada = ler_texto_obrigatorio("  >> Digite sua senha: ")
 
             # Procura o cliente na lista
@@ -171,7 +171,29 @@ def menu_portal_cliente():
         elif opcao == '2':
             print("\n--- NOVO CADASTRO ---")
             nome = ler_texto_obrigatorio("  >> Digite seu Nome Completo: ")
-            cpf = ler_texto_obrigatorio("  >> Digite seu CPF (apenas números): ")
+
+            while True:
+                cpf = ler_cpf("  >> Digite seu CPF (apenas números): ")
+
+                if cpf_ja_cadastrado(cpf):
+                    print(f"\n{VERMELHO}ERRO: Este CPF já possui uma conta no sistema!{RESET}")
+
+                    # A ROTA DE FUGA ENTRA AQUI:
+                    print(f"{AMARELO}Você pode tentar outro CPF ou voltar para fazer Login.{RESET}")
+                    escolha = input("  >> Digite [0] para voltar ou [Enter] para tentar outro CPF: ").strip()
+
+                    if escolha == "0":
+                        cancelou_cadastro = True  # Levanta a bandeira de desistência
+                        break  # Quebra o loop do CPF
+                    else:
+                        continue  # Reinicia o loop do CPF pra ele tentar de novo
+                else:
+                    # Se não tá cadastrado, quebra o loop e prossegue com o cadastro
+                    break
+
+            if cancelou_cadastro:
+                continue
+
             senha = ler_texto_obrigatorio("  >> Crie uma senha para sua conta: ")
 
             novo_cliente = Cliente(nome=nome, cpf=cpf)

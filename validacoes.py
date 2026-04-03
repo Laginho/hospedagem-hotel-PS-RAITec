@@ -24,6 +24,11 @@ def ler_numero_inteiro(mensagem):
         try:
             # Tenta converter o texto para inteiro
             numero = int(valor)
+
+            if numero <= 0:
+                print(f"{AMARELO}ERRO: A quantidade de dias deve ser maior que zero.{RESET}")
+                continue
+
             return numero
         except ValueError:
             # Se quebrar (ex: digitou letra), avisa o erro
@@ -86,3 +91,44 @@ def get_nome_cliente(cpf: str) -> str:
         if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf:
             return conta.get("NOME", None)
     return None
+
+
+def ler_cpf(mensagem: str) -> str:
+    """Lê, higieniza e valida o formato básico de um CPF."""
+    while True:
+        cpf_digitado = input(mensagem).strip()
+
+        cpf_limpo = cpf_digitado.replace(".", "").replace("-", "")
+
+        if cpf_limpo == "":
+            print(f"{AMARELO}ERRO: O CPF não pode ficar vazio.{RESET}")
+            continue
+
+        if len(cpf_limpo) != 11:
+            print(f"{AMARELO}ERRO: O CPF deve ter exatamente 11 números. Você digitou {len(cpf_limpo)}.{RESET}")
+            continue
+
+        if not cpf_limpo.isdigit():
+            print(f"{AMARELO}ERRO: O CPF deve conter apenas números válidos.{RESET}")
+            continue
+
+        return cpf_limpo
+
+    from helper_db import parse_csv
+
+def cpf_ja_cadastrado(cpf_limpo: str) -> bool:
+    """Verifica se o CPF já existe no banco de dados de credenciais."""
+    try:
+        # Puxa a lista de usuários salvos no arquivo
+        usuarios_salvos = parse_csv("credenciais.csv")
+
+        # Procura linha por linha se o CPF já está na coluna "USUARIO"
+        for usuario in usuarios_salvos:
+            if usuario["USUARIO"] == cpf_limpo:
+                return True
+
+        return False
+
+    except FileNotFoundError:
+        # Se o arquivo CSV ainda não existe, é impossível ter alguém cadastrado
+        return False
