@@ -1,14 +1,14 @@
 from datetime import date, timedelta
-from hashlib import sha256 # para as senhas
+from helper_db import save_csv, parse_csv
 
 class Funcionario:
     def __init__(self, nome, cpf, senha):
         self.nome = nome
         self.cpf = cpf
-        self.senha = sha256(senha.encode())
+        self.senha = senha
         #TODO LOGIN?
     def validar_login(self, senha):
-        if sha256(senha.encode()).hexdigest() == self.senha.hexdigest():
+        if senha == self.senha:
             return True
         else:
             return False
@@ -26,6 +26,13 @@ class Cliente:
     def addReserva(self, reserva):
         self.reservas.append(reserva)
     #TODO? Printar as reservas?
+
+    def validar_login(self, senha):
+        contas = parse_csv("credenciais.csv")
+        for conta in contas:
+            if conta["TIPO"] == "Cliente" and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
+                return True
+        return False
 
 #classe das reservas
 class Reserva:

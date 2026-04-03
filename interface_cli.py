@@ -1,5 +1,6 @@
 from helper_quartos import print_quartos_disponiveis, fazer_checkin, consultar_reserva, cancelar_reserva
 from validacoes import ler_texto_obrigatorio, tem_quarto_disponivel, quarto_esta_livre
+from helper_db import parse_csv, save_csv
 from utils.utils import limpar_tela, pausar_tela, AMARELO, RESET, VERMELHO, VERDE, AZUL
 from classes_raiteis import Funcionario, Cliente
 
@@ -153,6 +154,7 @@ def menu_portal_cliente():
         if opcao == '1':
             print("\n--- LOGIN DE CLIENTE ---")
             cpf_digitado = ler_texto_obrigatorio("  >> Digite seu CPF (apenas números): ")
+            senha_digitada = ler_texto_obrigatorio("  >> Digite sua senha: ")
 
             # Procura o cliente na lista
             cliente_logado = None
@@ -161,23 +163,25 @@ def menu_portal_cliente():
                     cliente_logado = cli
                     break
 
-            if cliente_logado:
+            if cliente_logado and cliente_logado.validar_login(senha_digitada):
                 print(f"\n{VERDE}Login efetuado! Bem-vindo(a) de volta, {cliente_logado.getNome()}.{RESET}")
                 pausar_tela()
                 menu_cliente_cli()
             else:
-                print(f"\n{VERMELHO}ERRO: CPF não encontrado. Por favor, crie uma conta primeiro.{RESET}")
+                print(f"\n{VERMELHO}ERRO: não foi possível autenticar. Por favor, confira se os dados estão corretos e tente novamente.{RESET}")
                 pausar_tela()
 
         elif opcao == '2':
             print("\n--- NOVO CADASTRO ---")
             nome = ler_texto_obrigatorio("  >> Digite seu Nome Completo: ")
             cpf = ler_texto_obrigatorio("  >> Digite seu CPF (apenas números): ")
+            senha = ler_texto_obrigatorio("  >> Crie uma senha para sua conta: ")
 
             novo_cliente = Cliente(nome=nome, cpf=cpf)
             clientes_cadastrados.append(novo_cliente)
+            save_csv("credenciais.csv", [{"TIPO": "Cliente", "USUARIO": cpf, "SENHA": senha}])
 
-            print(f"\n{VERDE}Conta criada com sucesso! Objeto Cliente gerado na memória. (MOCK){RESET}")
+            print(f"\n{VERDE}Conta criada com sucesso! Objeto Cliente gerado na memória e credenciais salvas no banco de dados.{RESET}")
             pausar_tela()
 
         elif opcao == '0':
