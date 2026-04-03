@@ -18,24 +18,24 @@ def fazer_checkin(nome: str, dias: str) -> str:
     """Realiza o check-in de um cliente em um quarto disponível."""
     
     data = parse_csv("quartos.csv")
-    quarto_disponível = None
+    quarto_disponivel = None
     
     for quarto in data:
         if quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL":
-            quarto_disponível = quarto
+            quarto_disponivel = quarto
             break
 
-    if quarto_disponível:
-        quarto_disponível["DISPONIBILIDADE"] = "RESERVADO"
-        quarto_disponível["CLIENTE"] = nome
-        quarto_disponível["CHECKIN"] = date.today().isoformat()
+    if quarto_disponivel:
+        quarto_disponivel["DISPONIBILIDADE"] = "RESERVADO"
+        quarto_disponivel["CLIENTE"] = nome
+        quarto_disponivel["CHECKIN"] = date.today().isoformat()
         
-        checkout = date.today().fromisoformat(quarto_disponível["CHECKIN"]) + timedelta(days=int(dias))
-        quarto_disponível["CHECKOUT"] = checkout.isoformat()
+        checkout = date.today().fromisoformat(quarto_disponivel["CHECKIN"]) + timedelta(days=int(dias))
+        quarto_disponivel["CHECKOUT"] = checkout.isoformat()
         
         save_csv("quartos.csv", data)
         
-        return f"Check-in realizado com sucesso no quarto {quarto_disponível['QUARTO']}."
+        return f"Check-in realizado com sucesso no quarto {quarto_disponivel['QUARTO']}."
     
     else:
         return "Não há quartos disponíveis para check-in."
