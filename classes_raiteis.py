@@ -1,4 +1,17 @@
 from datetime import date, timedelta
+from hashlib import sha256 # para as senhas
+
+class Funcionario:
+    def __init__(self, nome, cpf, senha):
+        self.nome = nome
+        self.cpf = cpf
+        self.senha = sha256(senha.encode())
+        #TODO LOGIN?
+    def validar_login(self, senha):
+        if sha256(senha.encode()).hexdigest() == self.senha.hexdigest():
+            return True
+        else:
+            return False
 
 #classe dos clientes (hóspedes)
 class Cliente:
@@ -45,6 +58,8 @@ class Quarto:
     def flipOcupado(self): self.ocupado = not self.ocupado
 
 
+#cpf é em int ou em string????? duvida cruel
+
 # teste
 # c1 = Cliente("tom", 1234)
 # c2 = Cliente("jerry", 12345)
@@ -55,3 +70,6 @@ class Quarto:
 # q3 = Quarto("103")
 # r1 = Reserva(c1, q1, date.today(), 5)
 # print(str(r1.getQuarto().getNumero())+" "+str(r1.getQuarto().getOcupado())+" "+str(r1.getCheckin())+" "+str(r1.getCheckout()))
+#f1 = Funcionario("Fernando", 1234, "1234")
+#print(f1.validar_login("12345"))
+#print(f1.validar_login("1234"))
