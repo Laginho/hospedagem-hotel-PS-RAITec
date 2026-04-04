@@ -1,6 +1,6 @@
 from datetime import datetime, date
-from utils.utils import VERMELHO, VERDE, AZUL, AMARELO, NEGRITO, RESET
-from helper_db import parse_csv
+from utils.utils import VERMELHO, AMARELO, NEGRITO, RESET
+from services.helper_db import parse_csv
 
 
 def ler_texto_obrigatorio(mensagem):
@@ -54,7 +54,7 @@ def ler_data_futura(mensagem: str) -> date:
 
 def tem_quarto_disponivel():
     """Verifica no CSV se existe pelo menos um quarto livre."""
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
 
     for quarto in data:
         if quarto["DISPONIBILIDADE"].strip().upper() == "DISPONÍVEL":
@@ -65,7 +65,7 @@ def tem_quarto_disponivel():
 
 def quarto_esta_livre(numero_quarto: str) -> bool:
     """Verifica se um quarto específico existe e está com status 'DISPONÍVEL'."""
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
 
     for quarto in data:
         # Achou o quarto que o usuário digitou
@@ -78,7 +78,7 @@ def quarto_esta_livre(numero_quarto: str) -> bool:
 
 def validar_login(cpf: str, senha: str) -> bool:
     """Verifica se existe um cliente com o CPF e senha fornecidos."""
-    contas = parse_csv("credenciais.csv")
+    contas = parse_csv("data/credenciais.csv")
     for conta in contas:
         if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
             return True
@@ -86,7 +86,7 @@ def validar_login(cpf: str, senha: str) -> bool:
 
 def get_nome_cliente(cpf: str) -> str:
     """Dado um CPF, retorna o nome do cliente associado a ele, ou None se não encontrado."""
-    contas = parse_csv("credenciais.csv")
+    contas = parse_csv("data/credenciais.csv")
     for conta in contas:
         if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf:
             return conta.get("NOME", None)
@@ -97,6 +97,9 @@ def ler_cpf(mensagem: str) -> str:
     """Lê, higieniza e valida o formato básico de um CPF."""
     while True:
         cpf_digitado = input(mensagem).strip()
+
+        if cpf_digitado == "0":
+            return "0"
 
         cpf_limpo = cpf_digitado.replace(".", "").replace("-", "")
 
@@ -114,13 +117,12 @@ def ler_cpf(mensagem: str) -> str:
 
         return cpf_limpo
 
-    from helper_db import parse_csv
 
 def cpf_ja_cadastrado(cpf_limpo: str) -> bool:
     """Verifica se o CPF já existe no banco de dados de credenciais."""
     try:
         # Puxa a lista de usuários salvos no arquivo
-        usuarios_salvos = parse_csv("credenciais.csv")
+        usuarios_salvos = parse_csv("data/credenciais.csv")
 
         # Procura linha por linha se o CPF já está na coluna "USUARIO"
         for usuario in usuarios_salvos:

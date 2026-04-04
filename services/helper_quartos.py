@@ -2,14 +2,14 @@
 
 """
 
-from helper_db import parse_csv, save_csv
+from services.helper_db import parse_csv, save_csv
 from datetime import date, timedelta
 from utils.utils import VERDE, RESET, VERMELHO, AMARELO
 
 
 def print_todos_os_quartos():
     """Imprime TODOS os quartos para a visualização da administração."""
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
 
     print("\n" + "=" * 46)
     print(f"| {'QUARTO':^8} | {'STATUS':^16} | {'DIÁRIA (R$)':^11} |")
@@ -40,7 +40,7 @@ def print_todos_os_quartos():
 def print_quartos_disponiveis():
     """Imprime os quartos disponíveis formatados como uma tabela."""
 
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
 
 
     print("\n" + "=" * 46)
@@ -70,7 +70,7 @@ def print_quartos_disponiveis():
 def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) -> str:
     """Tenta realizar o check-in de um cliente em um quarto específico."""
 
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
     quarto_disponivel = None
 
     for quarto in data:
@@ -90,7 +90,7 @@ def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) 
         checkout = date.today().fromisoformat(quarto_disponivel["CHECKIN"]) + timedelta(days=int(dias))
         quarto_disponivel["CHECKOUT"] = checkout.isoformat()
 
-        save_csv("quartos.csv", data)
+        save_csv("data/quartos.csv", data)
 
         valor_diaria = float(quarto_disponivel.get("DIARIA", 0))
         valor_total = valor_diaria * int(dias)
@@ -106,7 +106,7 @@ def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) 
 def consultar_reserva(nome: str) -> str:
     """Consulta a reserva de um cliente pelo nome e exibe o valor total da estadia."""
 
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
     reservas = []
 
     for quarto in data:
@@ -144,7 +144,7 @@ def consultar_reserva(nome: str) -> str:
 def cancelar_reserva(nome: str, quarto_numero: str) -> str:
     """Cancela a reserva de um cliente pelo nome e pelo número do quarto."""
     
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
     
     for quarto in data:
         if quarto["CLIENTE"].strip().lower() == nome.strip().lower() and quarto["QUARTO"] == quarto_numero:
@@ -153,21 +153,18 @@ def cancelar_reserva(nome: str, quarto_numero: str) -> str:
             quarto["CHECKIN"] = ""
             quarto["CHECKOUT"] = ""
             
-            save_csv("quartos.csv", data)
+            save_csv("data/quartos.csv", data)
             
             return f"Reserva cancelada com sucesso para o cliente {nome}."
     
     return "Nenhuma reserva encontrada para o nome fornecido."
-
-
-from helper_db import parse_csv, save_csv
 
 #==================================================================================================================
 #==================================================================================================================
 
 def adicionar_quarto_db(numero_quarto: str, preco_diaria: float) -> bool:
     """Adiciona um novo quarto ao CSV. Retorna True se der certo, False se já existir."""
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
 
 
     for quarto in data:
@@ -185,7 +182,7 @@ def adicionar_quarto_db(numero_quarto: str, preco_diaria: float) -> bool:
     }
 
     data.append(novo_quarto)
-    save_csv("quartos.csv", data)
+    save_csv("data/quartos.csv", data)
 
     return True
 
@@ -194,11 +191,11 @@ def adicionar_quarto_db(numero_quarto: str, preco_diaria: float) -> bool:
 
 def alterar_preco_quarto_db(numero_quarto: str, novo_preco: float):
     """Apenas salva o novo preço. Assume que a validação já foi feita."""
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:
             quarto["DIARIA"] = f"{novo_preco:.2f}"
-            save_csv("quartos.csv", data)
+            save_csv("data/quartos.csv", data)
             return
 
 #==================================================================================================================
@@ -206,8 +203,59 @@ def alterar_preco_quarto_db(numero_quarto: str, novo_preco: float):
 
 def verificar_status_quarto(numero_quarto: str) -> str:
     """Busca o quarto e retorna o status dele, ou 'NAO_ENCONTRADO'."""
-    data = parse_csv("quartos.csv")
+    data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:
             return quarto["DISPONIBILIDADE"].strip().upper()
     return "NAO_ENCONTRADO"
+
+
+#==================================================================================================================
+#==================================================================================================================
+
+
+def alterar_status_quarto_db(numero_quarto: str, novo_status: str):
+    """Atualiza a disponibilidade de um quarto no CSV."""
+    data = parse_csv("data/quartos.csv")
+    for quarto in data:
+        if quarto["QUARTO"] == numero_quarto:
+            quarto["DISPONIBILIDADE"] = novo_status
+            save_csv("data/quartos.csv", data)
+            return
+
+#==================================================================================================================
+#==================================================================================================================
+
+def excluir_quarto_db(numero_quarto: str):
+    """Remove a linha do quarto correspondente e salva o CSV."""
+    data = parse_csv("data/quartos.csv")
+
+    data_atualizada = [quarto for quarto in data if quarto["QUARTO"] != numero_quarto]
+
+    save_csv("data/quartos.csv", data_atualizada)
+
+#==================================================================================================================
+#==================================================================================================================
+
+def obter_quarto_db(numero_quarto: str):
+    """Retorna o dicionário completo com os dados do quarto, ou None se não achar."""
+    data = parse_csv("data/quartos.csv")
+    for quarto in data:
+        if quarto["QUARTO"] == numero_quarto:
+            return quarto
+    return None
+
+#==================================================================================================================
+#==================================================================================================================
+
+def liberar_quarto_db(numero_quarto: str):
+    """Limpa os dados do cliente e volta o quarto para o status de DISPONÍVEL."""
+    data = parse_csv("data/quartos.csv")
+    for quarto in data:
+        if quarto["QUARTO"] == numero_quarto:
+            quarto["DISPONIBILIDADE"] = "DISPONÍVEL"
+            quarto["CLIENTE"] = ""
+            quarto["CHECKIN"] = ""
+            quarto["CHECKOUT"] = ""
+            save_csv("data/quartos.csv", data)
+            return

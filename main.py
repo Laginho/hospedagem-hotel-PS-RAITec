@@ -1,4 +1,4 @@
-from interface_cli import menu_principal
+from ui.interface_cli import menu_principal
 
 if __name__ == "__main__":
     menu_principal()

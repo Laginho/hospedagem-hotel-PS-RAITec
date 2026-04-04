@@ -1,4 +1,4 @@
-from helper_cli import *
+from ui.helper_cli import *
 
 
 #==================================================================================================================
@@ -74,17 +74,23 @@ def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: 
         print(" "*3 + "ÁREA DO FUNCIONÁRIO")
         print("="*35 + "\n")
 
-        print(" > [1] - Cadastrar Cliente")
-        print(" > [2] - Gerenciar Quartos")
+        print(" > [1] - Nova Reserva (Balcão)")
+        print(" > [2] - Cadastrar Cliente")
         print(" > [3] - Registrar Checkout")
-        print(" > [4] - Visualizar Base de Dados")
-        print(" > [5] - Cadastrar Funcionário")
+        print(" > [4] - Gerenciar Quartos")
+        print(" > [5] - Visualizar Base de Dados")
+        print(" > [6] - Cadastrar Funcionário")
         print(" > [0] - Sair")
         print("\n" + "-"*35)
 
         opcao = input("\n >> Escolha uma opção: ").strip()
 
         if opcao == "1":
+
+            fluxo_fazer_reserva_funcionario()
+
+        elif opcao == "2":
+
 
             sucesso = fluxo_de_cadastro("Cliente")
 
@@ -93,16 +99,20 @@ def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: 
 
             pausar_tela()
 
-        elif opcao == "2":
+
+        elif opcao == "3":
+
+            fluxo_registrar_checkout()
+
+        elif opcao == "4":
 
             menu_gerenciar_quartos()
 
-        elif opcao == "3":
-            print("Registrar Checkout")
-        elif opcao == "4":
-            print("Visualizar Base de Dados")
-
         elif opcao == "5":
+
+            fluxo_visualizar_base()
+
+        elif opcao == "6":
 
             sucesso = fluxo_de_cadastro("Funcionário")
 
@@ -113,8 +123,9 @@ def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: 
 
 
         elif opcao == "0":
-            print(f"\n{AZUL}Finalizando Programa...{RESET}")
-            exit()
+            print(f"\n{AZUL}Fazendo logoff...{RESET}")
+            break
+            
         else:
             print(f"{VERMELHO}ERRO: Digite uma opção válida!{RESET}")
             pausar_tela()
@@ -151,13 +162,15 @@ def menu_gerenciar_quartos():
             fluxo_alterar_preco()
 
         elif opcao == "3":
-            print("Fluxo de Manutenção...")
-            pausar_tela()
+
+            fluxo_manutencao_quarto()
+
         elif opcao == "4":
-            print("Fluxo de Excluir Quarto...")
-            pausar_tela()
+
+            fluxo_excluir_quarto()
+
         elif opcao == "0":
-            break  
+            break
         else:
             print(f"{VERMELHO}ERRO: Digite uma opção válida!{RESET}")
             pausar_tela()

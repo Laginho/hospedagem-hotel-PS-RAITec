@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from helper_db import save_csv, parse_csv
+from services.helper_db import parse_csv
 
 class Funcionario:
     def __init__(self, nome, cpf, senha):
@@ -9,7 +9,7 @@ class Funcionario:
         #TODO LOGIN?
 
     def validar_login(self, senha):
-        contas = parse_csv("credenciais.csv")
+        contas = parse_csv("data/credenciais.csv")
         for conta in contas:
             if conta["TIPO"] == "Funcionário" and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
                 return True
@@ -30,7 +30,7 @@ class Cliente:
     #TODO? Printar as reservas?
 
     def validar_login(self, senha):
-        contas = parse_csv("credenciais.csv")
+        contas = parse_csv("data/credenciais.csv")
         for conta in contas:
             if conta["TIPO"] == "Cliente" and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
                 return True
