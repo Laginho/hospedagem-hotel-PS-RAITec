@@ -7,11 +7,13 @@ class Funcionario:
         self.cpf = cpf
         self.senha = senha
         #TODO LOGIN?
+
     def validar_login(self, senha):
-        if senha == self.senha:
-            return True
-        else:
-            return False
+        contas = parse_csv("credenciais.csv")
+        for conta in contas:
+            if conta["TIPO"] == "Funcionário" and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
+                return True
+        return False
 
 #classe dos clientes (hóspedes)
 class Cliente:

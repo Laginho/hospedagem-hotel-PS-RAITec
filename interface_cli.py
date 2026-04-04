@@ -237,10 +237,17 @@ def menu_portal_funcionario():
 
 
                 funcionario_logado = None                   # Busca se o CPF digitado existe na lista mock de funcionários
-                for func in funcionarios_cadastrados:
-                    if func.cpf == cpf_digitado:
-                        funcionario_logado = func
+                # for func in funcionarios_cadastrados:
+                #     if func.cpf == cpf_digitado:
+                #         funcionario_logado = func
+                #         break
+
+                contas = parse_csv("credenciais.csv")
+                for conta in contas:
+                    if conta["TIPO"] == "Funcionário" and conta["USUARIO"] == cpf_digitado:
+                        funcionario_logado = Funcionario(conta["NOME"], conta["USUARIO"], conta["SENHA"])
                         break
+                # podia fazer um metodo "fetch_funcionario"
 
                 if funcionario_logado:
                     if funcionario_logado.validar_login(senha_digitada):
