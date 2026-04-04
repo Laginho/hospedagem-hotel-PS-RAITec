@@ -1,7 +1,5 @@
 import os
 
-
-
 # Códigos ANSI para cores no terminal
 VERMELHO = '\033[91m'
 VERDE = '\033[92m'
