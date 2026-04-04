@@ -23,7 +23,10 @@ def parse_csv(filename: str) -> list:
     with open(filename, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         return [row for row in reader]
-    
+
+#==================================================================================================================
+#==================================================================================================================
+
 def print_csv(filename: str) -> None:
     """Imprime os dados de um arquivo CSV formatados como uma tabela.
     
@@ -39,7 +42,11 @@ def print_csv(filename: str) -> None:
     
     for row in data:
         print("\t".join(str(row[col]) for col in columns))
-    
+
+
+# ==================================================================================================================
+# ==================================================================================================================
+
 def save_csv(filename: str, data: list) -> None:
     """Salva dados em um arquivo CSV.
     
@@ -56,21 +63,35 @@ def save_csv(filename: str, data: list) -> None:
         writer.writeheader()
         writer.writerows(data)
 
+#==================================================================================================================
+#==================================================================================================================
 
 def cadastrar_usuario_bd(tipo, nome, cpf, senha):
     """Função coringa para cadastrar Cliente ou Funcionário no banco."""
-    contas = parse_csv("credenciais.csv")
+    contas = parse_csv("data/credenciais.csv")
     contas.append({"TIPO": tipo, "USUARIO": cpf, "SENHA": senha, "NOME": nome})
-    save_csv("credenciais.csv", contas)
+    save_csv("data/credenciais.csv", contas)
 
+#==================================================================================================================
+#==================================================================================================================
 
-# helper_db.py
 def autenticar_usuario_db(cpf, senha, tipo):
     """Busca o usuário no CSV e verifica se a senha e o tipo batem."""
-    contas = parse_csv("credenciais.csv")
+    contas = parse_csv("data/credenciais.csv")
 
     for conta in contas:
         if conta["TIPO"] == tipo and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
             return conta
 
     return None  #
+
+#==================================================================================================================
+#==================================================================================================================
+
+def buscar_nome_cliente_por_cpf(cpf: str):
+    """Busca um cliente pelo CPF e retorna o nome. Retorna None se não achar."""
+    contas = parse_csv("data/credenciais.csv")
+    for conta in contas:
+        if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf:
+            return conta["NOME"]
+    return None
