@@ -71,6 +71,6 @@ def autenticar_usuario_db(cpf, senha, tipo):
 
     for conta in contas:
         if conta["TIPO"] == tipo and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
-            return conta  
+            return conta
 
     return None  #

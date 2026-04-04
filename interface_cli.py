@@ -1,6 +1,4 @@
-from helper_quartos import print_quartos_disponiveis, consultar_reserva, cancelar_reserva
-from utils.utils import limpar_tela, pausar_tela, RESET, VERMELHO, VERDE, AZUL
-from helper_cli import fluxo_de_cadastro, fluxo_de_login, fluxo_fazer_reserva
+from helper_cli import *
 
 
 #==================================================================================================================
@@ -96,7 +94,9 @@ def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: 
             pausar_tela()
 
         elif opcao == "2":
-            print("Gerenciar Quartos")
+
+            menu_gerenciar_quartos()
+
         elif opcao == "3":
             print("Registrar Checkout")
         elif opcao == "4":
@@ -122,6 +122,50 @@ def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: 
 
 #==================================================================================================================
 #==================================================================================================================
+
+
+
+def menu_gerenciar_quartos():
+
+    while True:
+        limpar_tela()
+        print("\n" + "=" * 35)
+        print(" " * 5 + "GERENCIAR QUARTOS")
+        print("=" * 35 + "\n")
+
+        print(" > [1] - Adicionar Novo Quarto")
+        print(" > [2] - Alterar Preço da Diária")
+        print(" > [3] - Colocar/Tirar de Manutenção")
+        print(" > [4] - Excluir Quarto")
+        print(" > [0] - Voltar")
+        print("\n" + "-" * 35)
+
+        opcao = input("\n >> Escolha uma opção: ").strip()
+
+        if opcao == "1":
+
+            fluxo_adicionar_quarto()
+
+        elif opcao == "2":
+
+            fluxo_alterar_preco()
+
+        elif opcao == "3":
+            print("Fluxo de Manutenção...")
+            pausar_tela()
+        elif opcao == "4":
+            print("Fluxo de Excluir Quarto...")
+            pausar_tela()
+        elif opcao == "0":
+            break  
+        else:
+            print(f"{VERMELHO}ERRO: Digite uma opção válida!{RESET}")
+            pausar_tela()
+
+
+#==================================================================================================================
+#==================================================================================================================
+
 
 
 def menu_portal_cliente():
