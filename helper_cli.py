@@ -1,8 +1,13 @@
 from validacoes import *
 from helper_db import cadastrar_usuario_bd, autenticar_usuario_db
-from utils.utils import VERMELHO, VERDE, AMARELO, RESET, pausar_tela, limpar_tela
+from utils.utils import pausar_tela, limpar_tela
 from classes_raiteis import Cliente, Funcionario
-from helper_quartos import print_quartos_disponiveis, fazer_checkin
+from helper_quartos import *
+
+
+#==================================================================================================================
+#==================================================================================================================
+
 
 def fluxo_de_cadastro(tipo_usuario):
     print(f"\n--- NOVO CADASTRO DE {tipo_usuario.upper()} ---")
@@ -36,7 +41,8 @@ def fluxo_de_cadastro(tipo_usuario):
     return True
 
 
-
+#==================================================================================================================
+#==================================================================================================================
 
 
 def fluxo_de_login(tipo_usuario):
@@ -68,6 +74,8 @@ def fluxo_de_login(tipo_usuario):
             print(f"{AMARELO}Tente novamente ou digite [0] para voltar.{RESET}\n")
 
 
+#==================================================================================================================
+#==================================================================================================================
 
 
 def fluxo_fazer_reserva(cliente):
@@ -93,3 +101,97 @@ def fluxo_fazer_reserva(cliente):
 
     print(f"\n{mensagem_sucesso}")
     pausar_tela()
+
+
+#==================================================================================================================
+#==================================================================================================================
+
+
+def fluxo_adicionar_quarto():
+    """Gerencia a tela de criação de um novo quarto."""
+    limpar_tela()
+    print("\n" + "=" * 35)
+    print(" " * 7 + "ADICIONAR NOVO QUARTO")
+    print("=" * 35 + "\n")
+
+    print_todos_os_quartos()
+
+    while True:
+        numero = ler_texto_obrigatorio("\n  >> Digite o número do novo quarto (ou [0] para cancelar): ").strip()
+
+        if numero == "0":
+            return
+
+        try:
+
+            preco = float(input("  >> Digite o valor da diária (ex: 150.00): ").strip())
+
+            if preco < 0:
+                print(f"{VERMELHO}ERRO: O preço da diária não pode ser negativo.{RESET}")
+                continue
+
+        except ValueError:
+            print(f"{VERMELHO}ERRO: Digite um valor numérico válido para o preço (use ponto para os centavos).{RESET}")
+            continue
+
+
+        sucesso = adicionar_quarto_db(numero, preco)
+
+        if sucesso:
+            print(f"\n{VERDE}Sucesso! Quarto {numero} adicionado com diária de R$ {preco:.2f}.{RESET}")
+            pausar_tela()
+            break
+        else:
+            print(f"\n{VERMELHO}ERRO: O quarto {numero} já existe no sistema!{RESET}")
+            print(f"{AMARELO}Tente outro número.{RESET}")
+
+
+#==================================================================================================================
+#==================================================================================================================
+
+
+def fluxo_alterar_preco():
+    """Gerencia a tela de alteração do valor da diária de um quarto."""
+    limpar_tela()
+    print("\n" + "=" * 35)
+    print(" " * 4 + "ALTERAR PREÇO DA DIÁRIA")
+    print("=" * 35 + "\n")
+
+    print_todos_os_quartos()
+
+    while True:
+        numero = ler_texto_obrigatorio("\n  >> Digite o número do quarto (ou [0] para cancelar): ").strip()
+
+        if numero == "0":
+            return
+
+
+        status = verificar_status_quarto(numero)
+
+        if status == "NAO_ENCONTRADO":
+            print(f"\n{VERMELHO}ERRO: O quarto {numero} não existe no sistema!{RESET}")
+            continue
+
+        elif status != "DISPONÍVEL":
+            print(f"\n{VERMELHO}ERRO: O quarto {numero} está {status}!{RESET}")
+            print(f"{AMARELO}Não é permitido alterar o preço de um quarto ocupado ou em manutenção.{RESET}")
+            continue
+        # ------------------------------
+
+
+        try:
+            novo_preco = float(input("  >> Digite o NOVO valor da diária (ex: 180.00): ").strip())
+
+            if novo_preco < 0:
+                print(f"{VERMELHO}ERRO: O preço da diária não pode ser negativo.{RESET}")
+                continue
+
+        except ValueError:
+            print(f"{VERMELHO}ERRO: Digite um valor numérico válido (use ponto para os centavos).{RESET}")
+            continue
+
+
+        alterar_preco_quarto_db(numero, novo_preco)
+        print(f"\n{VERDE}Sucesso! A diária do quarto {numero} foi atualizada para R$ {novo_preco:.2f}.{RESET}")
+        pausar_tela()
+        break
