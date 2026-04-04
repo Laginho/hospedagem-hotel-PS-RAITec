@@ -200,7 +200,9 @@ def menu_portal_cliente():
 
             novo_cliente = Cliente(nome=nome, cpf=cpf)
             clientes_cadastrados.append(novo_cliente)
-            save_csv("credenciais.csv", [{"TIPO": "Cliente", "USUARIO": cpf, "SENHA": senha, "NOME": nome}])
+            contas = parse_csv("credenciais.csv")
+            contas.append( {"TIPO": "Cliente", "USUARIO": cpf, "SENHA": senha, "NOME": nome})
+            save_csv("credenciais.csv", contas)
 
             print(f"\n{VERDE}Conta criada com sucesso! Objeto Cliente gerado na memória e credenciais salvas no banco de dados.{RESET}")
             pausar_tela()
