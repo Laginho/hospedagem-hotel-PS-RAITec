@@ -172,6 +172,8 @@ def menu_portal_cliente():
             print("\n--- NOVO CADASTRO ---")
             nome = ler_texto_obrigatorio("  >> Digite seu Nome Completo: ")
 
+            cancelou_cadastro = False
+
             while True:
                 cpf = ler_cpf("  >> Digite seu CPF (apenas números): ")
 
