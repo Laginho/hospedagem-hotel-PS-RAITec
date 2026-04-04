@@ -55,3 +55,22 @@ def save_csv(filename: str, data: list) -> None:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
+
+
+def cadastrar_usuario_bd(tipo, nome, cpf, senha):
+    """Função coringa para cadastrar Cliente ou Funcionário no banco."""
+    contas = parse_csv("credenciais.csv")
+    contas.append({"TIPO": tipo, "USUARIO": cpf, "SENHA": senha, "NOME": nome})
+    save_csv("credenciais.csv", contas)
+
+
+# helper_db.py
+def autenticar_usuario_db(cpf, senha, tipo):
+    """Busca o usuário no CSV e verifica se a senha e o tipo batem."""
+    contas = parse_csv("credenciais.csv")
+
+    for conta in contas:
+        if conta["TIPO"] == tipo and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
+            return conta  
+
+    return None  #
