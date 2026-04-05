@@ -13,6 +13,14 @@ def fluxo_de_cadastro(tipo_usuario):
     print(f"\n--- NOVO CADASTRO DE {tipo_usuario.upper()} ---")
     nome = ler_texto_obrigatorio(f"  >> Digite o Nome Completo do {tipo_usuario}: ")
 
+    if tipo_usuario == "Cliente":
+        nascimento = ler_data_nascimento("  >> Digite a Data de Nascimento (DD/MM/AAAA): ")
+        endereco = ler_endereco("  >> Digite a Cidade/Estado (Ex: Fortaleza - CE): ")
+    else:
+        # Se for funcionário, o sistema preenche sozinho pra não quebrar o CSV
+        nascimento = "N/A"
+        endereco = "N/A"
+
     cancelou_cadastro = False
 
     while True:
@@ -40,7 +48,7 @@ def fluxo_de_cadastro(tipo_usuario):
 
     senha = ler_texto_obrigatorio("  >> Crie uma senha: ")
 
-    cadastrar_usuario_bd(tipo_usuario, nome, cpf, senha)
+    cadastrar_usuario_bd(tipo_usuario, nome, cpf, senha, nascimento, endereco)
 
     return True
 
@@ -366,20 +374,25 @@ def fluxo_registrar_checkout():
 
 
 def print_todos_os_usuarios():
-    """Imprime a base de dados, separando as tabelas de Funcionários e Clientes."""
+    """Imprime a base de dados, com layouts diferentes para Funcionários e Clientes."""
+    from datetime import datetime, date
     data = parse_csv("data/credenciais.csv")
 
+    funcionarios = [c for c in data if c.get("TIPO") == "Funcionário"]
+    clientes = [c for c in data if c.get("TIPO") == "Cliente"]
 
-    funcionarios = []
-    clientes = []
+    # Função interna rápida para calcular a idade
+    def calcular_idade(data_str):
+        if not data_str or data_str == "N/A":
+            return "N/A"
+        try:
+            nascimento = datetime.strptime(data_str, "%d/%m/%Y").date()
+            hoje = date.today()
+            return str(hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day)))
+        except:
+            return "N/A"
 
-    for conta in data:
-        if conta.get("TIPO") == "Funcionário":
-            funcionarios.append(conta)
-        elif conta.get("TIPO") == "Cliente":
-            clientes.append(conta)
-
-    # --- TABELA DE FUNCIONÁRIOS ---
+    # --- TABELA DE FUNCIONÁRIOS (Simplificada) ---
     print("\n" + "=" * 50)
     print(f"| {'BASE DE FUNCIONÁRIOS':^46} |")
     print("=" * 50)
@@ -390,26 +403,29 @@ def print_todos_os_usuarios():
         print(f"| {'Nenhum funcionário cadastrado.':^46} |")
     else:
         for f in funcionarios:
-            nome = f.get("NOME", "Sem Nome")
+            nome = f.get("NOME", "Sem Nome")[:26]
             cpf = f.get("USUARIO", "Sem CPF")
             print(f"| {nome:<26} | {cpf:^17} |")
     print("-" * 50)
 
-    # --- TABELA DE CLIENTES ---
-    print("\n" + "=" * 50)
-    print(f"| {'BASE DE CLIENTES':^46} |")
-    print("=" * 50)
-    print(f"| {'NOME':^26} | {'CPF':^17} |")
-    print("-" * 50)
+    # --- TABELA DE CLIENTES (Completa para Insights) ---
+    print("\n" + "=" * 85)
+    print(f"| {'BASE DE CLIENTES (DADOS PARA INSIGHTS)':^81} |")
+    print("=" * 85)
+    print(f"| {'NOME':^20} | {'CPF':^14} | {'IDADE':^7} | {'ENDEREÇO/CIDADE':^28} |")
+    print("-" * 85)
 
     if not clientes:
-        print(f"| {'Nenhum cliente cadastrado.':^46} |")
+        print(f"| {'Nenhum cliente cadastrado.':^81} |")
     else:
         for c in clientes:
-            nome = c.get("NOME", "Sem Nome")
+            nome = c.get("NOME", "Sem Nome")[:20]
             cpf = c.get("USUARIO", "Sem CPF")
-            print(f"| {nome:<26} | {cpf:^17} |")
-    print("-" * 50)
+            idade = calcular_idade(c.get("NASCIMENTO", ""))
+            endereco = c.get("ENDERECO", "N/A")[:28]
+
+            print(f"| {nome:<20} | {cpf:^14} | {idade:^7} | {endereco:<28} |")
+    print("-" * 85)
 
 
 #==================================================================================================================
