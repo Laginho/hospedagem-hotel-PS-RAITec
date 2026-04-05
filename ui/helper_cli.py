@@ -102,6 +102,7 @@ def fluxo_fazer_reserva(cliente):
     dias = input("Digite a quantidade de dias para a reserva: ").strip()
 
     mensagem_sucesso = fazer_checkin(cliente.getNome(), cliente.getCPF(), quarto, dias, data_checkin)
+    # alterado pra receber cpf
 
     print(f"\n{mensagem_sucesso}")
     pausar_tela()

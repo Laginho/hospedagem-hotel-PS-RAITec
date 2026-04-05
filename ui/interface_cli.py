@@ -26,8 +26,8 @@ def menu_cliente_cli(usuario_atual):                                # MENU DO CL
         opcao = input("\n >> Escolha uma opção: ").strip()
         print("\n\n")
 
-        nome = usuario_atual.getNome()
-        cpf = usuario_atual.getCPF()
+        nome = usuario_atual.getNome()   #alterei isso para que ele pudesse pegar os dados antes, já que repetia muito durante os if s
+        cpf = usuario_atual.getCPF()    #pegar o cpf pra poder usar os métodos helper enviando ele também
 
         if opcao == "1":
 

@@ -113,6 +113,7 @@ def consultar_reserva(nome: str, cpf: str) -> str:
     for quarto in data:
         if quarto["USUARIO"].strip().lower() == cpf.strip().lower():
             reservas.append(quarto)
+    # alterei pra buscar por cpfs
 
     if not reservas:
         return "Nenhuma reserva encontrada para o nome fornecido."
@@ -146,7 +147,7 @@ def cancelar_reserva(nome: str, cpf: str, quarto_numero: str) -> str:
     """Cancela a reserva de um cliente pelo nome e pelo número do quarto."""
     
     data = parse_csv("data/quartos.csv")
-    
+    # alterei pra buscar por cpfs
     for quarto in data:
         if quarto["USUARIO"].strip().lower() == cpf.strip().lower() and quarto["QUARTO"] == quarto_numero:
             quarto["DISPONIBILIDADE"] = "DISPONÍVEL"
