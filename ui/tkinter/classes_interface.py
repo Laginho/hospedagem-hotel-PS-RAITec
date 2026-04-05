@@ -232,13 +232,13 @@ class MenuCliente(tk.Frame):
         self.label_boas_vindas.config(text=f"Bem-vindo(a), {cliente.nome}!")
 
     def ver_quartos(self):
-        pass  # TODO
+        pass
 
     def fazer_reserva(self):
-        pass  # TODO
+        pass
 
     def consultar_reservas(self):
-        pass  # TODO
+        pass
 
     def cancelar_reserva(self):
-        pass  # TODO
+        pass
