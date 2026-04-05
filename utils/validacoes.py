@@ -134,3 +134,63 @@ def cpf_ja_cadastrado(cpf_limpo: str) -> bool:
     except FileNotFoundError:
         # Se o arquivo CSV ainda não existe, é impossível ter alguém cadastrado
         return False
+
+
+
+def ler_data_nascimento(mensagem: str) -> str:
+    """Pede a data de nascimento, valida se é no passado e retorna a string DD/MM/AAAA."""
+    while True:
+        data_str = input(mensagem).strip()
+        try:
+            data_obj = datetime.strptime(data_str, "%d/%m/%Y").date()
+            hoje = date.today()
+
+            if data_obj >= hoje:
+                print(f"{VERMELHO}ERRO: A data de nascimento deve estar no passado!{RESET}")
+                continue
+
+            # Validação extra de sanidade (evitar que a pessoa coloque que nasceu em 1800)
+            idade = hoje.year - data_obj.year - ((hoje.month, hoje.day) < (data_obj.month, data_obj.day))
+            if idade > 120 or idade < 0:
+                print(f"{VERMELHO}ERRO: Data de nascimento irreal.{RESET}")
+                continue
+
+            return data_str # Retornamos a string para salvar direto no CSV
+        except ValueError:
+            print(f"{VERMELHO}ERRO: Formato inválido. Use o formato DD/MM/AAAA.{RESET}")
+
+
+
+
+def ler_endereco(mensagem: str) -> str:
+    """Garante que o local de origem siga o padrão 'Cidade - UF' para facilitar insights."""
+    estados_validos = [
+        "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS",
+        "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC",
+        "SP", "SE", "TO"
+    ]
+
+    while True:
+        endereco = input(mensagem).strip()
+
+        # Tenta dividir o que o usuário digitou usando o hífen como corte
+        partes = endereco.split("-")
+
+        # Se não tiver exatamente 2 partes (cidade de um lado, estado do outro), dá erro
+        if len(partes) != 2:
+            print(f"{AMARELO}ERRO: O formato deve ser 'Cidade - UF'. Exemplo: Fortaleza - CE{RESET}")
+            continue
+
+        cidade = partes[0].strip()
+        uf = partes[1].strip().upper()
+
+        if len(cidade) < 3:
+            print(f"{AMARELO}ERRO: O nome da cidade '{cidade}' está muito curto.{RESET}")
+            continue
+
+        if uf not in estados_validos:
+            print(f"{AMARELO}ERRO: '{uf}' não é uma sigla de estado válida no Brasil.{RESET}")
+            continue
+
+        # Se passou em tudo, retorna o formato perfeitinho e padronizado
+        return f"{cidade} - {uf}"

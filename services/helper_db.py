@@ -66,10 +66,10 @@ def save_csv(filename: str, data: list) -> None:
 #==================================================================================================================
 #==================================================================================================================
 
-def cadastrar_usuario_bd(tipo, nome, cpf, senha):
+def cadastrar_usuario_bd(tipo, nome, cpf, senha, nascimento, endereco):
     """Função coringa para cadastrar Cliente ou Funcionário no banco."""
     contas = parse_csv("data/credenciais.csv")
-    contas.append({"TIPO": tipo, "USUARIO": cpf, "SENHA": senha, "NOME": nome})
+    contas.append({"TIPO": tipo, "USUARIO": cpf, "SENHA": senha, "NOME": nome, "NASCIMENTO": nascimento, "ENDERECO": endereco})
     save_csv("data/credenciais.csv", contas)
 
 #==================================================================================================================

@@ -1,8 +1,10 @@
-TIPO,USUARIO,SENHA,NOME
-Funcionário,12345678900,admin,ADMIN
-Cliente,11122233300,zombie,Leon S. Kennedy
-Funcionário,98765432100,loona,Chuu do Loona
-Cliente,11122233344,todoido,Menina Maluca da Silva
-Cliente,10220330455,forca,Luke Skywalker
-Cliente,11123456789,dante,Luke Skywalker
-Cliente,00000000000,12,Dante
+TIPO,USUARIO,SENHA,NOME,NASCIMENTO,ENDERECO
+Funcionário,12345678900,admin,ADMIN,,
+Cliente,11122233300,zombie,Leon S. Kennedy,,
+Funcionário,98765432100,loona,Chuu do Loona,,
+Cliente,11122233344,todoido,Menina Maluca da Silva,,
+Cliente,10220330455,forca,Luke Skywalker,,
+Cliente,11123456789,dante,Luke Skywalker,,
+Cliente,00000000000,12,Dante,,
+Cliente,11223385977,show,Fulano Cunha,10/05/1980,Barbalha - CE
+Cliente,75395184620,show2,Sicrano,14/04/1980,Maranguape - CE
