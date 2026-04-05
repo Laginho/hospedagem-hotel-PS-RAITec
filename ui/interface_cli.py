@@ -1,4 +1,23 @@
-from ui.helper_cli import *
+"""Menus principais da interface de linha de comando do sistema.
+
+Este módulo define a navegação entre portais de cliente e funcionário,
+delegando ações operacionais para os fluxos implementados na camada helper.
+"""
+
+from services.helper_quartos import cancelar_reserva, consultar_reserva, print_quartos_disponiveis
+from ui.helper_cli import (
+    fluxo_adicionar_quarto,
+    fluxo_alterar_preco,
+    fluxo_de_cadastro,
+    fluxo_de_login,
+    fluxo_excluir_quarto,
+    fluxo_fazer_reserva,
+    fluxo_fazer_reserva_funcionario,
+    fluxo_manutencao_quarto,
+    fluxo_registrar_checkout,
+    fluxo_visualizar_base,
+)
+from utils.utils import AZUL, RESET, VERDE, VERMELHO, limpar_tela, pausar_tela
 
 
 #==================================================================================================================
@@ -7,6 +26,14 @@ from ui.helper_cli import *
 
 
 def menu_cliente_cli(usuario_atual):                                # MENU DO CLIENTE: Tudo que o cliente pode acessar.
+    """Exibe e controla o menu da área do cliente.
+
+    Args:
+        usuario_atual: Objeto do cliente autenticado no sistema.
+
+    O menu permite consultar disponibilidade, reservar, consultar reservas e
+    cancelar reservas do próprio usuário.
+    """
 
     while True:
         limpar_tela()                                  # A função limpar_tela é puramente estética, rode o programa no console "Alt + F12" -> Python main.py
@@ -67,6 +94,11 @@ def menu_cliente_cli(usuario_atual):                                # MENU DO CL
 #==================================================================================================================
 
 def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: Tudo que o funcionário pode acessar.
+    """Exibe e controla o menu principal da área de funcionário.
+
+    O menu centraliza operações de balcão, cadastro e administração de quartos
+    e bases de dados.
+    """
 
     while True:
         limpar_tela()
@@ -138,6 +170,11 @@ def menu_funcionario_cli():                             # MENU DO FUNCIONÁRIO: 
 
 
 def menu_gerenciar_quartos():
+    """Exibe submenu de gerenciamento de quartos para funcionários.
+
+    Reúne operações de criação, atualização de preço, manutenção e exclusão de
+    quartos.
+    """
 
     while True:
         limpar_tela()
@@ -183,6 +220,7 @@ def menu_gerenciar_quartos():
 
 
 def menu_portal_cliente():
+    """Exibe o portal de entrada do cliente."""
     while True:
         limpar_tela()
         print("\n" + "="*35)
@@ -224,6 +262,10 @@ def menu_portal_cliente():
 
 
 def menu_portal_funcionario():
+    """Exibe o portal de entrada do funcionário.
+
+    O acesso é feito por login antes de liberar o menu administrativo.
+    """
     while True:
         limpar_tela()
         print("\n" + "="*35)
@@ -255,6 +297,10 @@ def menu_portal_funcionario():
 
 
 def menu_principal():
+    """Renderiza o menu principal e roteia para cada portal de acesso.
+
+    Este é o ponto central de navegação do programa em execução no terminal.
+    """
 
     while True:
         limpar_tela()

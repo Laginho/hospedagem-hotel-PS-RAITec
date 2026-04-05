@@ -1,9 +1,23 @@
+"""Funções de validação e normalização de entrada para a interface CLI.
+
+Este módulo concentra regras de consistência dos dados informados pelo usuário
+antes de acionar os serviços de negócio e persistência em CSV.
+"""
+
 from datetime import datetime, date
 from utils.utils import VERMELHO, AMARELO, NEGRITO, RESET
 from services.helper_db import parse_csv
 
 
 def ler_texto_obrigatorio(mensagem):
+    """Lê um texto obrigatório, bloqueando entradas vazias.
+
+    Args:
+        mensagem: Texto exibido no prompt de entrada.
+
+    Returns:
+        str: Conteúdo digitado pelo usuário sem espaços nas extremidades.
+    """
     #Garante que o usuário não deixe o campo em branco.
     while True:
         texto = input(mensagem).strip()
@@ -14,6 +28,14 @@ def ler_texto_obrigatorio(mensagem):
 
 
 def ler_numero_inteiro(mensagem):
+    """Lê um número inteiro positivo para uso em fluxos da aplicação.
+
+    Args:
+        mensagem: Texto exibido no prompt de entrada.
+
+    Returns:
+        int: Número inteiro maior que zero validado pelo usuário.
+    """
     #Garante que o usuário digite um número inteiro válido.
     while True:
         valor = input(mensagem).strip()
@@ -36,7 +58,14 @@ def ler_numero_inteiro(mensagem):
 
 
 def ler_data_futura(mensagem: str) -> date:
-    """Pede uma data ao usuário e garante que ela seja igual ou maior que hoje."""
+    """Lê uma data e valida se ela não está no passado.
+
+    Args:
+        mensagem (str): Texto exibido no prompt de entrada.
+
+    Returns:
+        date: Data válida no formato de objeto date.
+    """
     while True:
         data_str = input(mensagem).strip()
         try:
@@ -53,7 +82,12 @@ def ler_data_futura(mensagem: str) -> date:
 
 
 def tem_quarto_disponivel():
-    """Verifica no CSV se existe pelo menos um quarto livre."""
+    """Verifica se existe ao menos um quarto DISPONÍVEL na base.
+
+    Returns:
+        bool: True quando há quarto livre; False quando todos os quartos estão
+            indisponíveis.
+    """
     data = parse_csv("data/quartos.csv")
 
     for quarto in data:
@@ -64,7 +98,15 @@ def tem_quarto_disponivel():
 
 
 def quarto_esta_livre(numero_quarto: str) -> bool:
-    """Verifica se um quarto específico existe e está com status 'DISPONÍVEL'."""
+    """Valida se um quarto específico existe e está disponível.
+
+    Args:
+        numero_quarto (str): Número do quarto consultado.
+
+    Returns:
+        bool: True quando o quarto existe e está DISPONÍVEL; False nos demais
+            casos.
+    """
     data = parse_csv("data/quartos.csv")
 
     for quarto in data:
@@ -77,7 +119,16 @@ def quarto_esta_livre(numero_quarto: str) -> bool:
     return False
 
 def validar_login(cpf: str, senha: str) -> bool:
-    """Verifica se existe um cliente com o CPF e senha fornecidos."""
+    """Valida credenciais de login para contas de cliente.
+
+    Args:
+        cpf (str): CPF informado no login.
+        senha (str): Senha informada no login.
+
+    Returns:
+        bool: True quando existe cliente com CPF e senha correspondentes;
+            False caso contrário.
+    """
     contas = parse_csv("data/credenciais.csv")
     for conta in contas:
         if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
@@ -85,7 +136,15 @@ def validar_login(cpf: str, senha: str) -> bool:
     return False
 
 def get_nome_cliente(cpf: str) -> str:
-    """Dado um CPF, retorna o nome do cliente associado a ele, ou None se não encontrado."""
+    """Retorna o nome do cliente associado ao CPF informado.
+
+    Args:
+        cpf (str): CPF do cliente a ser consultado.
+
+    Returns:
+        str | None: Nome do cliente quando encontrado; None quando não houver
+            registro correspondente.
+    """
     contas = parse_csv("data/credenciais.csv")
     for conta in contas:
         if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf:
@@ -94,7 +153,14 @@ def get_nome_cliente(cpf: str) -> str:
 
 
 def ler_cpf(mensagem: str) -> str:
-    """Lê, higieniza e valida o formato básico de um CPF."""
+    """Lê, higieniza e valida o formato básico de um CPF.
+
+    Args:
+        mensagem (str): Texto exibido no prompt de entrada.
+
+    Returns:
+        str: CPF com 11 dígitos numéricos, sem pontuação.
+    """
     while True:
         cpf_digitado = input(mensagem).strip()
 
@@ -119,7 +185,14 @@ def ler_cpf(mensagem: str) -> str:
 
 
 def cpf_ja_cadastrado(cpf_limpo: str) -> bool:
-    """Verifica se o CPF já existe no banco de dados de credenciais."""
+    """Verifica se um CPF já está cadastrado na base de credenciais.
+
+    Args:
+        cpf_limpo (str): CPF sem formatação.
+
+    Returns:
+        bool: True quando o CPF já existe no cadastro; False caso contrário.
+    """
     try:
         # Puxa a lista de usuários salvos no arquivo
         usuarios_salvos = parse_csv("data/credenciais.csv")
@@ -138,7 +211,14 @@ def cpf_ja_cadastrado(cpf_limpo: str) -> bool:
 
 
 def ler_data_nascimento(mensagem: str) -> str:
-    """Pede a data de nascimento, valida se é no passado e retorna a string DD/MM/AAAA."""
+    """Lê e valida data de nascimento no formato DD/MM/AAAA.
+
+    Args:
+        mensagem (str): Texto exibido no prompt de entrada.
+
+    Returns:
+        str: Data de nascimento válida no formato DD/MM/AAAA.
+    """
     while True:
         data_str = input(mensagem).strip()
         try:
@@ -163,7 +243,14 @@ def ler_data_nascimento(mensagem: str) -> str:
 
 
 def ler_endereco(mensagem: str) -> str:
-    """Garante que o local de origem siga o padrão 'Cidade - UF' para facilitar insights."""
+    """Lê e valida endereço no padrão Cidade - UF.
+
+    Args:
+        mensagem (str): Texto exibido no prompt de entrada.
+
+    Returns:
+        str: Endereço padronizado no formato Cidade - UF.
+    """
     estados_validos = [
         "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS",
         "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC",

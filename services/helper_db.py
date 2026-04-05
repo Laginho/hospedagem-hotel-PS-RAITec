@@ -1,23 +1,20 @@
-"""Módulo de auxiliar de banco de dados para manipulação de arquivos CSV.
+"""Utilitários de persistência em CSV para usuários e credenciais.
 
-O arquivo será da forma QUARTO | DISPONÍVEL/RESERVADO/OCUPADO | CLIENTE | CHECKIN | CHECKOUT
-
-Funções:
-    parse_csv(filename): Lê um arquivo CSV e retorna seu conteúdo como uma lista de dicionários.
-    save_csv(filename, data): Salva dados em um arquivo CSV.
+Este módulo centraliza operações de leitura, escrita e consultas simples em
+arquivos CSV utilizados pelo sistema de hospedagem.
 """
 
 import csv
 
 def parse_csv(filename: str) -> list:
-    """Analisa um arquivo CSV e retorna seu conteúdo como uma lista de dicionários.
-    
+    """Lê um arquivo CSV e retorna os registros como lista de dicionários.
+
     Args:
-        filename (str): O caminho do arquivo CSV a ser lido.
+        filename (str): Caminho do arquivo CSV a ser lido.
+
     Returns:
-        list: Uma lista de dicionários, onde cada dicionário representa uma linha
-              do arquivo CSV, com as chaves sendo os nomes das colunas definidas
-              na primeira linha do arquivo.
+        list: Coleção em que cada item representa uma linha do arquivo e as
+            chaves correspondem aos nomes das colunas.
     """
     
     with open(filename, mode='r', encoding='utf-8') as file:
@@ -28,10 +25,13 @@ def parse_csv(filename: str) -> list:
 #==================================================================================================================
 
 def print_csv(filename: str) -> None:
-    """Imprime os dados de um arquivo CSV formatados como uma tabela.
-    
+    """Imprime os dados de um arquivo CSV em formato tabular simples.
+
     Args:
-        filename (str): O caminho do arquivo CSV a ser impresso.
+        filename (str): Caminho do arquivo CSV a ser exibido.
+
+    A função assume que existe ao menos uma linha de dados no arquivo,
+    pois usa o primeiro registro para obter o cabeçalho.
     """
     
     data = parse_csv(filename)
@@ -48,12 +48,13 @@ def print_csv(filename: str) -> None:
 # ==================================================================================================================
 
 def save_csv(filename: str, data: list) -> None:
-    """Salva dados em um arquivo CSV.
-    
+    """Persiste dados em um arquivo CSV.
+
     Args:
-        filename (str): O caminho do arquivo CSV a ser salvo.
-        data (list): Uma lista de dicionários, onde cada dicionário representa uma linha
-                     a ser salva no arquivo CSV, com as chaves sendo os nomes das colunas.
+        filename (str): Caminho do arquivo CSV de destino.
+        data (list): Lista de dicionários a ser salva no arquivo.
+
+    Quando a lista está vazia, o arquivo não é sobrescrito.
     """
     
     with open(filename, mode='w', encoding='utf-8', newline='') as file:
@@ -67,7 +68,16 @@ def save_csv(filename: str, data: list) -> None:
 #==================================================================================================================
 
 def cadastrar_usuario_bd(tipo, nome, cpf, senha, nascimento, endereco):
-    """Função coringa para cadastrar Cliente ou Funcionário no banco."""
+    """Cadastra um usuário na base de credenciais.
+
+    Args:
+        tipo: Tipo de conta, como Cliente ou Funcionário.
+        nome: Nome completo do usuário.
+        cpf: CPF usado como identificador de login.
+        senha: Senha de autenticação da conta.
+        nascimento: Data de nascimento no formato adotado pela aplicação.
+        endereco: Cidade/estado informado no cadastro.
+    """
     contas = parse_csv("data/credenciais.csv")
     contas.append({"TIPO": tipo, "USUARIO": cpf, "SENHA": senha, "NOME": nome, "NASCIMENTO": nascimento, "ENDERECO": endereco})
     save_csv("data/credenciais.csv", contas)
@@ -76,20 +86,38 @@ def cadastrar_usuario_bd(tipo, nome, cpf, senha, nascimento, endereco):
 #==================================================================================================================
 
 def autenticar_usuario_db(cpf, senha, tipo):
-    """Busca o usuário no CSV e verifica se a senha e o tipo batem."""
+    """Autentica um usuário com base em CPF, senha e tipo.
+
+    Args:
+        cpf: CPF informado no login.
+        senha: Senha informada no login.
+        tipo: Perfil esperado para autenticação.
+
+    Returns:
+        dict | None: Registro do usuário quando encontrado e validado; caso
+            contrário, retorna None.
+    """
     contas = parse_csv("data/credenciais.csv")
 
     for conta in contas:
         if conta["TIPO"] == tipo and conta["USUARIO"] == cpf and conta["SENHA"] == senha:
             return conta
 
-    return None  #
+    return None
 
 #==================================================================================================================
 #==================================================================================================================
 
 def buscar_nome_cliente_por_cpf(cpf: str):
-    """Busca um cliente pelo CPF e retorna o nome. Retorna None se não achar."""
+    """Busca o nome de um cliente a partir do CPF.
+
+    Args:
+        cpf (str): CPF do cliente que será consultado.
+
+    Returns:
+        str | None: Nome do cliente quando encontrado; None quando não existe
+            registro correspondente.
+    """
     contas = parse_csv("data/credenciais.csv")
     for conta in contas:
         if conta["TIPO"] == "Cliente" and conta["USUARIO"] == cpf:

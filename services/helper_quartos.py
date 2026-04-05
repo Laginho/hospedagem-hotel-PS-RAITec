@@ -1,5 +1,7 @@
-"""Módulo de auxiliar para funções relacionadas às reservas de quartos do hotel.
+"""Serviços de gestão de quartos, reservas e checkout.
 
+Este módulo reúne operações de consulta, exibição e atualização da base de
+quartos utilizada pelos fluxos de cliente e funcionário.
 """
 
 from services.helper_db import parse_csv, save_csv
@@ -8,7 +10,10 @@ from utils.utils import VERDE, RESET, VERMELHO, AMARELO
 
 
 def print_todos_os_quartos():
-    """Imprime TODOS os quartos para a visualização da administração."""
+    """Exibe todos os quartos cadastrados com status e valor de diária.
+
+    Esta visualização é utilizada principalmente pelos fluxos de administração.
+    """
     data = parse_csv("data/quartos.csv")
 
     print("\n" + "=" * 46)
@@ -38,7 +43,10 @@ def print_todos_os_quartos():
 #==================================================================================================================
 
 def print_quartos_disponiveis():
-    """Imprime os quartos disponíveis formatados como uma tabela."""
+    """Exibe apenas os quartos com disponibilidade para reserva.
+
+    Quando não há quartos livres, informa explicitamente a indisponibilidade.
+    """
 
     data = parse_csv("data/quartos.csv")
 
@@ -68,7 +76,19 @@ def print_quartos_disponiveis():
 #==================================================================================================================
 
 def fazer_checkin(nome: str, cpf: str, quarto_numero: str, dias: str, data_entrada: date) -> str:
-    """Tenta realizar o check-in de um cliente em um quarto específico."""
+    """Realiza o check-in de um cliente em um quarto específico.
+
+    Args:
+        nome (str): Nome do cliente responsável pela reserva.
+        cpf (str): CPF do cliente associado ao quarto.
+        quarto_numero (str): Número do quarto escolhido.
+        dias (str): Quantidade de dias da hospedagem.
+        data_entrada (date): Data prevista para o check-in.
+
+    Returns:
+        str: Mensagem de sucesso com o valor total da estadia, ou mensagem de
+            falha quando o quarto não existe ou não está disponível.
+    """
 
     data = parse_csv("data/quartos.csv")
     quarto_disponivel = None
@@ -105,7 +125,15 @@ def fazer_checkin(nome: str, cpf: str, quarto_numero: str, dias: str, data_entra
 #==================================================================================================================
 
 def consultar_reserva(nome: str, cpf: str) -> str:
-    """Consulta a reserva de um cliente pelo nome e exibe o valor total da estadia."""
+    """Consulta reservas de um cliente e calcula o total por estadia.
+
+    Args:
+        nome (str): Nome usado no cabeçalho do relatório de retorno.
+        cpf (str): CPF utilizado para filtrar as reservas.
+
+    Returns:
+        str: Resumo textual das reservas encontradas com período e valor total.
+    """
 
     data = parse_csv("data/quartos.csv")
     reservas = []
@@ -144,7 +172,17 @@ def consultar_reserva(nome: str, cpf: str) -> str:
 #==================================================================================================================
 
 def cancelar_reserva(nome: str, cpf: str, quarto_numero: str) -> str:
-    """Cancela a reserva de um cliente pelo nome e pelo número do quarto."""
+    """Cancela uma reserva ativa e libera o quarto informado.
+
+    Args:
+        nome (str): Nome do cliente para mensagem de confirmação.
+        cpf (str): CPF associado à reserva.
+        quarto_numero (str): Número do quarto a ser cancelado.
+
+    Returns:
+        str: Mensagem confirmando cancelamento ou ausência de reserva
+            compatível com os dados informados.
+    """
     
     data = parse_csv("data/quartos.csv")
     # alterei pra buscar por cpfs
@@ -166,7 +204,16 @@ def cancelar_reserva(nome: str, cpf: str, quarto_numero: str) -> str:
 #==================================================================================================================
 
 def adicionar_quarto_db(numero_quarto: str, preco_diaria: float) -> bool:
-    """Adiciona um novo quarto ao CSV. Retorna True se der certo, False se já existir."""
+    """Adiciona um novo quarto na base de dados.
+
+    Args:
+        numero_quarto (str): Identificador do quarto.
+        preco_diaria (float): Valor da diária do novo quarto.
+
+    Returns:
+        bool: True quando o quarto é adicionado; False quando já existe um
+            registro com o mesmo número.
+    """
     data = parse_csv("data/quartos.csv")
 
 
@@ -194,7 +241,14 @@ def adicionar_quarto_db(numero_quarto: str, preco_diaria: float) -> bool:
 #==================================================================================================================
 
 def alterar_preco_quarto_db(numero_quarto: str, novo_preco: float):
-    """Apenas salva o novo preço. Assume que a validação já foi feita."""
+    """Atualiza o valor da diária de um quarto existente.
+
+    Args:
+        numero_quarto (str): Número do quarto que será atualizado.
+        novo_preco (float): Novo valor da diária.
+
+    Este método assume que as validações de negócio já foram realizadas.
+    """
     data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:
@@ -206,7 +260,15 @@ def alterar_preco_quarto_db(numero_quarto: str, novo_preco: float):
 #==================================================================================================================
 
 def verificar_status_quarto(numero_quarto: str) -> str:
-    """Busca o quarto e retorna o status dele, ou 'NAO_ENCONTRADO'."""
+    """Consulta o status operacional de um quarto.
+
+    Args:
+        numero_quarto (str): Número do quarto consultado.
+
+    Returns:
+        str: Status do quarto em caixa alta quando encontrado, ou
+            NAO_ENCONTRADO quando não existe registro.
+    """
     data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:
@@ -219,7 +281,12 @@ def verificar_status_quarto(numero_quarto: str) -> str:
 
 
 def alterar_status_quarto_db(numero_quarto: str, novo_status: str):
-    """Atualiza a disponibilidade de um quarto no CSV."""
+    """Atualiza o status de disponibilidade de um quarto.
+
+    Args:
+        numero_quarto (str): Número do quarto que será atualizado.
+        novo_status (str): Novo status a ser salvo no registro.
+    """
     data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:
@@ -231,7 +298,11 @@ def alterar_status_quarto_db(numero_quarto: str, novo_status: str):
 #==================================================================================================================
 
 def excluir_quarto_db(numero_quarto: str):
-    """Remove a linha do quarto correspondente e salva o CSV."""
+    """Exclui um quarto da base de dados.
+
+    Args:
+        numero_quarto (str): Número do quarto que será removido.
+    """
     data = parse_csv("data/quartos.csv")
 
     data_atualizada = [quarto for quarto in data if quarto["QUARTO"] != numero_quarto]
@@ -242,7 +313,15 @@ def excluir_quarto_db(numero_quarto: str):
 #==================================================================================================================
 
 def obter_quarto_db(numero_quarto: str):
-    """Retorna o dicionário completo com os dados do quarto, ou None se não achar."""
+    """Obtém os dados completos de um quarto.
+
+    Args:
+        numero_quarto (str): Número do quarto desejado.
+
+    Returns:
+        dict | None: Dicionário com os dados do quarto quando encontrado; caso
+            contrário, retorna None.
+    """
     data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:
@@ -253,7 +332,14 @@ def obter_quarto_db(numero_quarto: str):
 #==================================================================================================================
 
 def liberar_quarto_db(numero_quarto: str):
-    """Limpa os dados do cliente e volta o quarto para o status de DISPONÍVEL."""
+    """Libera um quarto após checkout, limpando os dados da reserva.
+
+    Args:
+        numero_quarto (str): Número do quarto a ser disponibilizado novamente.
+
+    Além de marcar como DISPONÍVEL, remove cliente, usuário, check-in e
+    checkout do registro.
+    """
     data = parse_csv("data/quartos.csv")
     for quarto in data:
         if quarto["QUARTO"] == numero_quarto:

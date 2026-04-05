@@ -1,15 +1,57 @@
-from utils.utils import *
-from utils.validacoes import *
-from services.helper_db import cadastrar_usuario_bd, autenticar_usuario_db, buscar_nome_cliente_por_cpf
-from models.classes_raiteis import Cliente, Funcionario
-from services.helper_quartos import *
 
+"""Fluxos de interação do terminal para cadastro, login e operações de hotel.
+
+Este módulo concentra as rotinas da camada CLI que orquestram validações,
+serviços e mensagens ao usuário para operações de cliente e funcionário.
+"""
+
+from datetime import date, datetime
+
+from models.classes_raiteis import Cliente, Funcionario
+from services.helper_db import (
+    autenticar_usuario_db,
+    buscar_nome_cliente_por_cpf,
+    cadastrar_usuario_bd,
+    parse_csv,
+)
+from services.helper_quartos import (
+    adicionar_quarto_db,
+    alterar_preco_quarto_db,
+    alterar_status_quarto_db,
+    excluir_quarto_db,
+    fazer_checkin,
+    liberar_quarto_db,
+    obter_quarto_db,
+    print_quartos_disponiveis,
+    print_todos_os_quartos,
+    verificar_status_quarto,
+)
+from utils.utils import AMARELO, AZUL, RESET, VERDE, VERMELHO, limpar_tela, pausar_tela
+from utils.validacoes import (
+    cpf_ja_cadastrado,
+    ler_cpf,
+    ler_data_futura,
+    ler_data_nascimento,
+    ler_endereco,
+    ler_texto_obrigatorio,
+    quarto_esta_livre,
+    tem_quarto_disponivel,
+)
 
 #==================================================================================================================
 #==================================================================================================================
 
 
 def fluxo_de_cadastro(tipo_usuario):
+    """Executa o fluxo de cadastro de clientes ou funcionários.
+
+    Args:
+        tipo_usuario: Perfil a ser cadastrado, como Cliente ou Funcionário.
+
+    Returns:
+        bool: True quando o cadastro é concluído; False quando o usuário
+            cancela a operação.
+    """
     print(f"\n--- NOVO CADASTRO DE {tipo_usuario.upper()} ---")
     nome = ler_texto_obrigatorio(f"  >> Digite o Nome Completo do {tipo_usuario}: ")
 
@@ -58,7 +100,15 @@ def fluxo_de_cadastro(tipo_usuario):
 
 
 def fluxo_de_login(tipo_usuario):
-    """Gerencia as telas de input de login e retorna o objeto do usuário logado."""
+    """Executa o fluxo de login e retorna o usuário autenticado.
+
+    Args:
+        tipo_usuario: Perfil esperado para autenticação.
+
+    Returns:
+        Cliente | Funcionario | None: Objeto de domínio do usuário autenticado
+            ou None quando o login é cancelado.
+    """
     print(f"\n--- LOGIN DE {tipo_usuario.upper()} ---")
 
     while True:
@@ -91,6 +141,14 @@ def fluxo_de_login(tipo_usuario):
 
 
 def fluxo_fazer_reserva(cliente):
+    """Conduz o fluxo de reserva para um cliente já autenticado.
+
+    Args:
+        cliente: Instância de cliente com dados de nome e CPF.
+
+    O fluxo valida disponibilidade geral e disponibilidade específica do quarto
+    antes de efetivar o check-in.
+    """
     limpar_tela()
 
     if not tem_quarto_disponivel():
@@ -121,7 +179,10 @@ def fluxo_fazer_reserva(cliente):
 
 
 def fluxo_adicionar_quarto():
-    """Gerencia a tela de criação de um novo quarto."""
+    """Gerencia o fluxo de criação de um novo quarto.
+
+    A função valida preço e evita cadastro duplicado de número de quarto.
+    """
     limpar_tela()
     print("\n" + "=" * 35)
     print(" " * 7 + "ADICIONAR NOVO QUARTO")
@@ -164,7 +225,10 @@ def fluxo_adicionar_quarto():
 
 
 def fluxo_alterar_preco():
-    """Gerencia a tela de alteração do valor da diária de um quarto."""
+    """Gerencia o fluxo de alteração da diária de um quarto.
+
+    Apenas quartos disponíveis podem ter a diária alterada.
+    """
     limpar_tela()
     print("\n" + "=" * 35)
     print(" " * 4 + "ALTERAR PREÇO DA DIÁRIA")
@@ -213,7 +277,10 @@ def fluxo_alterar_preco():
 #==================================================================================================================
 
 def fluxo_manutencao_quarto():
-    """Alterna o status de um quarto entre DISPONÍVEL e MANUTENÇÃO."""
+    """Alterna o status de um quarto entre DISPONÍVEL e MANUTENÇÃO.
+
+    Quartos reservados não podem entrar em manutenção.
+    """
     limpar_tela()
     print("\n" + "=" * 35)
     print(" " * 4 + "MANUTENÇÃO DE QUARTOS")
@@ -260,7 +327,11 @@ def fluxo_manutencao_quarto():
 #==================================================================================================================
 
 def fluxo_excluir_quarto():
-    """Gerencia o fluxo de remoção definitiva de um quarto do sistema."""
+    """Gerencia o fluxo de exclusão definitiva de um quarto.
+
+    A exclusão exige confirmação explícita e é bloqueada para quartos
+    reservados.
+    """
     limpar_tela()
     print("\n" + "=" * 35)
     print(" " * 10 + "EXCLUIR QUARTO")
@@ -306,7 +377,11 @@ def fluxo_excluir_quarto():
 #==================================================================================================================
 
 def fluxo_registrar_checkout():
-    """Gerencia o encerramento da estadia, cálculo da conta e liberação do quarto."""
+    """Gerencia o checkout, cálculo da conta e liberação do quarto.
+
+    O fluxo só prossegue para quartos reservados e pode aplicar cobrança
+    mínima de uma diária quando o período calculado for zero.
+    """
     limpar_tela()
     print("\n" + "=" * 35)
     print(" " * 8 + "REGISTRAR CHECKOUT")
@@ -349,13 +424,13 @@ def fluxo_registrar_checkout():
         valor_diaria = float(quarto.get("DIARIA", "0") or "0")
         valor_total = valor_diaria * dias_hospedados
 
-        print(f"\n--- RESUMO DA CONTA ---")
+        print("\n--- RESUMO DA CONTA ---")
         print(f" Hóspede: {cliente}")
         print(f" Período: {quarto['CHECKIN']} até {quarto['CHECKOUT']} ({dias_hospedados} diárias)")
         print(f" Valor Total: {VERDE}R$ {valor_total:.2f}{RESET}")
         print("-" * 23)
 
-        confirmacao = input(f"\n  >> O pagamento foi realizado? Digite 'SIM' para liberar o quarto: ").strip().upper()
+        confirmacao = input("\n  >> O pagamento foi realizado? Digite 'SIM' para liberar o quarto: ").strip().upper()
 
         if confirmacao == "SIM":
             liberar_quarto_db(numero)
@@ -374,8 +449,11 @@ def fluxo_registrar_checkout():
 
 
 def print_todos_os_usuarios():
-    """Imprime a base de dados, com layouts diferentes para Funcionários e Clientes."""
-    from datetime import datetime, date
+    """Exibe a base de usuários em tabelas separadas por perfil.
+
+    Funcionários são exibidos em tabela simplificada e clientes em tabela com
+    campos adicionais para análise (idade e endereço).
+    """
     data = parse_csv("data/credenciais.csv")
 
     funcionarios = [c for c in data if c.get("TIPO") == "Funcionário"]
@@ -383,13 +461,21 @@ def print_todos_os_usuarios():
 
     # Função interna rápida para calcular a idade
     def calcular_idade(data_str):
+        """Calcula idade a partir de data DD/MM/AAAA.
+
+        Args:
+            data_str: Data de nascimento em string.
+
+        Returns:
+            str: Idade calculada ou N/A quando não for possível calcular.
+        """
         if not data_str or data_str == "N/A":
             return "N/A"
         try:
             nascimento = datetime.strptime(data_str, "%d/%m/%Y").date()
             hoje = date.today()
             return str(hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day)))
-        except:
+        except Exception:
             return "N/A"
 
     # --- TABELA DE FUNCIONÁRIOS (Simplificada) ---
@@ -433,7 +519,10 @@ def print_todos_os_usuarios():
 
 
 def fluxo_visualizar_base():
-    """Submenu para o administrador consultar os arquivos CSV."""
+    """Abre submenu para consulta das bases CSV do sistema.
+
+    Permite alternar entre visualização de quartos e de usuários.
+    """
     while True:
         limpar_tela()
         print("\n" + "=" * 35)
@@ -468,7 +557,11 @@ def fluxo_visualizar_base():
 #==================================================================================================================
 
 def fluxo_fazer_reserva_funcionario():
-    """Fluxo para o funcionário realizar a reserva para um cliente existente."""
+    """Executa reserva em balcão para um cliente já cadastrado.
+
+    O fluxo exige CPF válido no cadastro e segue as mesmas regras de
+    disponibilidade do fluxo de reserva do cliente.
+    """
     limpar_tela()
     print("\n" + "=" * 35)
     print(" "*6 + "NOVA RESERVA (BALCÃO)")
