@@ -1,25 +1,32 @@
 from datetime import date, timedelta
 from services.helper_db import parse_csv
+from abc import ABC
 
-class Funcionario:
+class Usuario(ABC):
     def __init__(self, nome, cpf, senha):
         self.nome = nome
-        self.cpf = cpf
         self.senha = senha
-        #TODO LOGIN?
+        self.cpf = cpf
+        self.tipo = "Nenhum"
 
     def validar_login(self, senha):
         contas = parse_csv("data/credenciais.csv")
         for conta in contas:
-            if conta["TIPO"] == "Funcionário" and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
+            if conta["TIPO"] == self.tipo and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
                 return True
         return False
 
+class Funcionario(Usuario):
+    def __init__(self, nome, cpf, senha):
+        super().__init__(nome, cpf, senha)
+        self.tipo = "Funcionário"
+        #TODO LOGIN?
+
 #classe dos clientes (hóspedes)
-class Cliente:
-    def __init__(self, nome, cpf):
-        self.nome = nome
-        self.cpf = cpf  #identificador único
+class Cliente(Usuario):
+    def __init__(self, nome, cpf, senha):
+        super().__init__(nome, cpf, senha)
+        self.tipo = "Cliente"
         self.reservas = []
 
     def getNome(self): return self.nome
@@ -27,14 +34,7 @@ class Cliente:
     def getReservas(self): return self.reservas
     def addReserva(self, reserva):
         self.reservas.append(reserva)
-    #TODO? Printar as reservas?
 
-    def validar_login(self, senha):
-        contas = parse_csv("data/credenciais.csv")
-        for conta in contas:
-            if conta["TIPO"] == "Cliente" and conta["USUARIO"] == self.cpf and conta["SENHA"] == senha:
-                return True
-        return False
 
 #classe das reservas
 class Reserva:
@@ -57,8 +57,9 @@ class Reserva:
 
 #classe dos quartos
 class Quarto:
-    def __init__(self, numero):
+    def __init__(self, numero, diaria):
         self.numero = str(numero)
+        self.diaria = int(diaria)
         self.ocupado = False
 
     def getNumero(self): return self.numero
