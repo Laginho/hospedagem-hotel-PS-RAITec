@@ -67,7 +67,7 @@ def print_quartos_disponiveis():
 #==================================================================================================================
 #==================================================================================================================
 
-def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) -> str:
+def fazer_checkin(nome: str, cpf: str, quarto_numero: str, dias: str, data_entrada: date) -> str:
     """Tenta realizar o check-in de um cliente em um quarto específico."""
 
     data = parse_csv("data/quartos.csv")
@@ -85,6 +85,7 @@ def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) 
     if quarto_disponivel:
         quarto_disponivel["DISPONIBILIDADE"] = "RESERVADO"
         quarto_disponivel["CLIENTE"] = nome
+        quarto_disponivel["USUARIO"] = cpf
         quarto_disponivel["CHECKIN"] = data_entrada.isoformat()
 
         checkout = date.today().fromisoformat(quarto_disponivel["CHECKIN"]) + timedelta(days=int(dias))
@@ -103,14 +104,14 @@ def fazer_checkin(nome: str, quarto_numero: str, dias: str, data_entrada: date) 
 #==================================================================================================================
 #==================================================================================================================
 
-def consultar_reserva(nome: str) -> str:
+def consultar_reserva(nome: str, cpf: str) -> str:
     """Consulta a reserva de um cliente pelo nome e exibe o valor total da estadia."""
 
     data = parse_csv("data/quartos.csv")
     reservas = []
 
     for quarto in data:
-        if quarto["CLIENTE"].strip().lower() == nome.strip().lower():
+        if quarto["USUARIO"].strip().lower() == cpf.strip().lower():
             reservas.append(quarto)
 
     if not reservas:
@@ -141,15 +142,16 @@ def consultar_reserva(nome: str) -> str:
 #==================================================================================================================
 #==================================================================================================================
 
-def cancelar_reserva(nome: str, quarto_numero: str) -> str:
+def cancelar_reserva(nome: str, cpf: str, quarto_numero: str) -> str:
     """Cancela a reserva de um cliente pelo nome e pelo número do quarto."""
     
     data = parse_csv("data/quartos.csv")
     
     for quarto in data:
-        if quarto["CLIENTE"].strip().lower() == nome.strip().lower() and quarto["QUARTO"] == quarto_numero:
+        if quarto["USUARIO"].strip().lower() == cpf.strip().lower() and quarto["QUARTO"] == quarto_numero:
             quarto["DISPONIBILIDADE"] = "DISPONÍVEL"
             quarto["CLIENTE"] = ""
+            quarto["USUARIO"] = ""
             quarto["CHECKIN"] = ""
             quarto["CHECKOUT"] = ""
             
@@ -176,6 +178,7 @@ def adicionar_quarto_db(numero_quarto: str, preco_diaria: float) -> bool:
         "QUARTO": numero_quarto,
         "DISPONIBILIDADE": "DISPONÍVEL",
         "CLIENTE": "",
+        "USUARIO": "",
         "CHECKIN": "",
         "CHECKOUT": "",
         "DIARIA": f"{preco_diaria:.2f}"
@@ -255,6 +258,7 @@ def liberar_quarto_db(numero_quarto: str):
         if quarto["QUARTO"] == numero_quarto:
             quarto["DISPONIBILIDADE"] = "DISPONÍVEL"
             quarto["CLIENTE"] = ""
+            quarto["USUARIO"] = ""
             quarto["CHECKIN"] = ""
             quarto["CHECKOUT"] = ""
             save_csv("data/quartos.csv", data)

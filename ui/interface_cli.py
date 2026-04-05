@@ -26,6 +26,9 @@ def menu_cliente_cli(usuario_atual):                                # MENU DO CL
         opcao = input("\n >> Escolha uma opção: ").strip()
         print("\n\n")
 
+        nome = usuario_atual.getNome()
+        cpf = usuario_atual.getCPF()
+
         if opcao == "1":
 
             limpar_tela()
@@ -39,17 +42,15 @@ def menu_cliente_cli(usuario_atual):                                # MENU DO CL
         elif opcao == "3":
 
             limpar_tela()
-            nome = usuario_atual.getNome()
-            print(consultar_reserva(nome))
+            print(consultar_reserva(nome,cpf))
             pausar_tela()
 
         elif opcao == "4":
 
             limpar_tela()
-            nome = usuario_atual.getNome()
-            print(consultar_reserva(nome))
+            print(consultar_reserva(nome,cpf))
             quarto = input("Digite o número do quarto que deseja cancelar: ").strip()
-            print(cancelar_reserva(nome, quarto))
+            print(cancelar_reserva(nome, cpf, quarto))
             pausar_tela()
 
         elif opcao == "0":

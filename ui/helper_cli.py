@@ -68,7 +68,7 @@ def fluxo_de_login(tipo_usuario):
             pausar_tela()
 
             if tipo_usuario == "Cliente":
-                return Cliente(nome=conta_encontrada["NOME"], cpf=conta_encontrada["USUARIO"])
+                return Cliente(nome=conta_encontrada["NOME"], cpf=conta_encontrada["USUARIO"], senha=conta_encontrada["SENHA"])
             elif tipo_usuario == "Funcionário":
                 return Funcionario(nome=conta_encontrada["NOME"], cpf=conta_encontrada["USUARIO"],
                                    senha=conta_encontrada["SENHA"])
@@ -101,7 +101,7 @@ def fluxo_fazer_reserva(cliente):
     data_checkin = ler_data_futura("Digite a data do Check-in (DD/MM/AAAA): ")
     dias = input("Digite a quantidade de dias para a reserva: ").strip()
 
-    mensagem_sucesso = fazer_checkin(cliente.getNome(), quarto, dias, data_checkin)
+    mensagem_sucesso = fazer_checkin(cliente.getNome(), cliente.getCPF(), quarto, dias, data_checkin)
 
     print(f"\n{mensagem_sucesso}")
     pausar_tela()
@@ -199,10 +199,6 @@ def fluxo_alterar_preco():
         print(f"\n{VERDE}Sucesso! A diária do quarto {numero} foi atualizada para R$ {novo_preco:.2f}.{RESET}")
         pausar_tela()
         break
-
-
-from services.helper_quartos import alterar_status_quarto_db  # <-- Adicione nos imports
-
 
 #==================================================================================================================
 #==================================================================================================================
@@ -493,7 +489,7 @@ def fluxo_fazer_reserva_funcionario():
     dias = input("  >> Digite a quantidade de dias para a reserva: ").strip()
 
     # Passamos o nome que achamos no banco de dados
-    mensagem_sucesso = fazer_checkin(nome_cliente, quarto, dias, data_checkin)
+    mensagem_sucesso = fazer_checkin(nome_cliente, cpf_cliente, quarto, dias, data_checkin)
 
     print(f"\n{mensagem_sucesso}")
     pausar_tela()
