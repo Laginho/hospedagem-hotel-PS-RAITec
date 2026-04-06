@@ -1,10 +1,23 @@
 TIPO,USUARIO,SENHA,NOME,NASCIMENTO,ENDERECO
 Funcionário,12345678900,admin,ADMIN,,
-Cliente,11122233300,zombie,Leon S. Kennedy,,
-Funcionário,98765432100,loona,Chuu do Loona,,
-Cliente,11122233344,todoido,Menina Maluca da Silva,,
-Cliente,10220330455,forca,Luke Skywalker,,
-Cliente,11123456789,dante,Luke Skywalker,,
-Cliente,00000000000,12,Dante,,
+Funcionário,11122233300,zombie,Leon S. Kennedy,,
+Cliente,98765432100,loona,Chuu do Loona,20/10/1999,Boa Vista - RR
+Cliente,11122233344,todoido,Menina Maluca da Silva,02/02/2005,Vitória - ES
+Cliente,10220330455,forca,Luke Skywalker,13/06/2007,Rio Branco - AC
+Cliente,11123456789,dante,Luke Skywalker,28/06/2007,Biguaçu - SC
+Cliente,00000000000,12devilmaycry,Dante Sparda,26/08/2002,João Pessoa - PB
 Cliente,11223385977,show,Fulano Cunha,10/05/1980,Barbalha - CE
-Cliente,75395184620,show2,Sicrano,14/04/1980,Maranguape - CE
+Cliente,75395184620,show2,Sicrano Albuquerque,14/04/1980,Maranguape - CE
+Cliente,42704271089,show3,Maya Bárbara Juliana da Silva,22/01/2003,Blumenau - SC
+Cliente,03358910040,show4,Julia Isis Alana de Paula,20/02/2003,Cariacica - ES
+Cliente,34801006000,show5,Calebe Thomas Almada,30/04/1997,Fortaleza - CE
+Cliente,98801140002,show6,Danilo Paulo da Mota,11/04/1996,Maceió - AL
+Cliente,38950445042,show7,Henrique Igor Cauê Gonçalves,08/04/2007,Natal - RN
+Cliente,53588229094,show8,Leonardo Erick Carvalho,19/11/1990,Belém - PA
+Cliente,33062596082,show9,Márcia Brenda Heloise,19/11/1994,Cuiabá - MT
+Cliente,29756287063,show10,Sandra Laura,12/07/2006,Gurupi - TO
+Cliente,54635577058,show11,Hellen Jaqueline,12/06/2000,Feira de Santana - BA
+Cliente,66340639070,show12,José Geraldo Anthony da Mata,26/02/1996,Camaragibe - PB
+Cliente,17778360004,show13,Gustavo Jorge Oliveira,10/05/2002,Brasília - DF
+Cliente,50235520047,show14,Isadora Jéssica Silvana Lopes,15/11/1994,São Luís - MA
+Cliente,89285091067,show15,Link,04/09/2003,Macapá - AP
